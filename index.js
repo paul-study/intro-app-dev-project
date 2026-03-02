@@ -239,7 +239,7 @@ const generateMultiplicationTable = (n) => {
 };
 
 const table = generateMultiplicationTable(4);
-console.log(table);
+//console.log(table);
 // Expected:
 // [
 //   [1, 2, 3, 4],
