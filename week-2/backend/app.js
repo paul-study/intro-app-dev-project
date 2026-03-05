@@ -5,7 +5,8 @@ import compression from "compression";
 
 // Import the index routes module
 import indexRoutes from "./routes/index.js";
-import aboutRouter from './routes/about.js';
+import aboutRouter from "./routes/about.js";
+import coursesRouter from "./routes/course.js";
 
 // Create an Express application
 const app = express();
@@ -22,7 +23,8 @@ app.use(compression());
 
 // Use the routes module
 app.use("/", indexRoutes);
-app.use('/', aboutRouter);
+app.use("/", aboutRouter);
+app.use("/", coursesRouter);
 
 // Start the server on port 3000
 app.listen(PORT, () => {
