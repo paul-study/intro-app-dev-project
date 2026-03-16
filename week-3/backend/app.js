@@ -10,7 +10,7 @@ import coursesRouter from "./routes/course.js";
 
 import institutionRoutes from "./routes/institution.js";
 
-
+import isContentTypeApplicationJSON from "./middleware/content-type.js";
 
 // Create an Express application
 const app = express();
@@ -28,6 +28,8 @@ app.use(compression());
 // These middleware functions must be declared before the routes
 app.use(express.urlencoded({ extended: false })); // To parse the incoming requests with urlencoded payloads. For example, form data
 app.use(express.json()); // To parse the incoming requests with JSON payloads. For example, REST API requests
+
+app.use(isContentTypeApplicationJSON); //checking the middleware content type
 
 // Use the routes module
 app.use("/", indexRoutes);
