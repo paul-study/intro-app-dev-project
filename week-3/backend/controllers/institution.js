@@ -13,7 +13,7 @@ const createInstitution = async (req, res) => {
         region,
         country,
         website,
-        emailAddress
+        emailAddress,
       },
     });
 
@@ -35,6 +35,14 @@ const createInstitution = async (req, res) => {
 const getInstitutions = async (req, res) => {
   try {
     const institutions = await prisma.institution.findMany();
+
+    // const institutions = await prisma.institution.findMany({
+    //   select: {
+    //     id: true,
+    //     name: true,
+    //     // add the fields you want here
+    //   },
+    // });
 
     // Check if there are no institutions
     if (institutions.length === 0) {
