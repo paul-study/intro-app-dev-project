@@ -9,6 +9,7 @@ import aboutRouter from "./routes/about.js";
 import coursesRouter from "./routes/course.js";
 
 import institutionRoutes from "./routes/institution.js";
+import departmentRoutes from "./routes/department.js";
 
 import isContentTypeApplicationJSON from "./middleware/content-type.js";
 
@@ -36,6 +37,7 @@ app.use("/", indexRoutes);
 app.use("/", aboutRouter);
 app.use("/", coursesRouter);
 app.use("/api/institutions", institutionRoutes);
+app.use("/api/departments", departmentRoutes);
 
 // Start the server on port 3000
 app.listen(PORT, () => {
