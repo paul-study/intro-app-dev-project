@@ -5,6 +5,7 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
+    "setup": "npm run env:copy && npm install && npx prisma generate && npm run prisma:migrate",
     "dev": "nodemon app.js",
     "format": "lint-staged",
     "lint": "eslint .",
@@ -12,7 +13,7 @@
     "env:copy": "cp .env.example .env || copy .env.example .env",
     "prisma:migrate": "npx prisma migrate dev",
     "prisma:reset": "npx prisma migrate reset --force",
-    "prisma:studio:" : "npx prisma studio"
+    "prisma:studio:": "npx prisma studio"
   },
   "lint-staged": {
     "*.js": "prettier --write"

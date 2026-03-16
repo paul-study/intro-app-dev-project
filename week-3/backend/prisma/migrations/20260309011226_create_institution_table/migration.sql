@@ -4,6 +4,8 @@ CREATE TABLE "Institution" (
     "name" TEXT NOT NULL,
     "region" TEXT NOT NULL,
     "country" TEXT NOT NULL,
+    "website" TEXT NOT NULL,
+    "emailAddress" TEXT NOT NULL,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL,
 

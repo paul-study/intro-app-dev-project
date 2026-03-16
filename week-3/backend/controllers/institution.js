@@ -3,7 +3,7 @@ import prisma from "../prisma/db.js";
 const createInstitution = async (req, res) => {
   // Try/catch blocks are used to handle exceptions
   try {
-    const { name, region, country } = req.body;
+    const { name, region, country, website, emailAddress } = req.body;
 
     // Create a new institution
     await prisma.institution.create({
@@ -12,6 +12,8 @@ const createInstitution = async (req, res) => {
         name,
         region,
         country,
+        website,
+        emailAddress
       },
     });
 
