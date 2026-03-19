@@ -33,3 +33,12 @@ model Department {
   createdAt     DateTime    @default(now())
   updatedAt     DateTime    @updatedAt
 }
+
+model user {
+  id            String    @id @default(uuid())
+  firstName     String    
+  lastName      String   
+  emailAddress  String    @unique
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+}

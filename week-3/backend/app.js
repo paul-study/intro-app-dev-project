@@ -7,9 +7,9 @@ import compression from "compression";
 import indexRoutes from "./routes/index.js";
 import aboutRouter from "./routes/about.js";
 import coursesRouter from "./routes/course.js";
-
 import institutionRoutes from "./routes/institution.js";
 import departmentRoutes from "./routes/department.js";
+import userRoutes from "./routes/user.js"
 
 import isContentTypeApplicationJSON from "./middleware/content-type.js";
 
@@ -38,6 +38,7 @@ app.use("/", aboutRouter);
 app.use("/", coursesRouter);
 app.use("/api/institutions", institutionRoutes);
 app.use("/api/departments", departmentRoutes);
+app.use("/api/users", userRoutes)
 
 // Start the server on port 3000
 app.listen(PORT, () => {
