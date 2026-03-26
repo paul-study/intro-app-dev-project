@@ -7,10 +7,11 @@ import compression from "compression";
 import indexRoutes from "./routes/index.js";
 import aboutRouter from "./routes/about.js";
 import coursesRouter from "./routes/course.js";
-
 import institutionRoutes from "./routes/institution.js";
+import departmentRoutes from "./routes/department.js";
+import userRoutes from "./routes/user.js"
 
-
+import isContentTypeApplicationJSON from "./middleware/content-type.js";
 
 // Create an Express application
 const app = express();
@@ -29,11 +30,15 @@ app.use(compression());
 app.use(express.urlencoded({ extended: false })); // To parse the incoming requests with urlencoded payloads. For example, form data
 app.use(express.json()); // To parse the incoming requests with JSON payloads. For example, REST API requests
 
+app.use(isContentTypeApplicationJSON); //checking the middleware content type
+
 // Use the routes module
 app.use("/", indexRoutes);
 app.use("/", aboutRouter);
 app.use("/", coursesRouter);
 app.use("/api/institutions", institutionRoutes);
+app.use("/api/departments", departmentRoutes);
+app.use("/api/users", userRoutes)
 
 // Start the server on port 3000
 app.listen(PORT, () => {
