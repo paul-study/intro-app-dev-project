@@ -13,7 +13,8 @@
     "env:copy": "cp .env.example .env || copy .env.example .env",
     "prisma:migrate": "npx prisma migrate dev",
     "prisma:reset": "npx prisma migrate reset --force",
-    "prisma:studio:": "npx prisma studio"
+    "prisma:studio:": "npx prisma studio",
+    "prisma:seed-institutions": "node ./prisma/seeding/institution.js"
   },
   "lint-staged": {
     "*.js": "prettier --write"
