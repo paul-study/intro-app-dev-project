@@ -18,9 +18,11 @@ Navigate to the project directory:
 cd <project-directory>
 Install the dependencies:
 
+npm run docker:run:dev
+
 npm install
 
-npm run startup
+npm run setup
 
 Running the Application
 npm run dev
