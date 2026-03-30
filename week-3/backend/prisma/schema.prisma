@@ -34,11 +34,19 @@ model Department {
   updatedAt     DateTime    @updatedAt
 }
 
-model user {
-  id            String    @id @default(uuid())
-  firstName     String    
-  lastName      String   
-  emailAddress  String    @unique
-  createdAt     DateTime  @default(now())
-  updatedAt     DateTime  @updatedAt
+enum Role {
+  ADMIN
+  STAFF
+  STUDENT
+}
+
+model User {
+  id String @id @default(uuid())
+  firstName String
+  lastName String
+  emailAddress String @unique
+  password String
+  role Role @default(STUDENT)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now())
 }

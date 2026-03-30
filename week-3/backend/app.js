@@ -4,6 +4,7 @@ import cors from "cors";
 import compression from "compression";
 
 // Import the index routes module
+import authRoutes from "./routes/auth.js";
 import indexRoutes from "./routes/index.js";
 import aboutRouter from "./routes/about.js";
 import coursesRouter from "./routes/course.js";
@@ -33,6 +34,7 @@ app.use(express.json()); // To parse the incoming requests with JSON payloads. F
 app.use(isContentTypeApplicationJSON); //checking the middleware content type
 
 // Use the routes module
+app.use("/api/auth", authRoutes);
 app.use("/", indexRoutes);
 app.use("/", aboutRouter);
 app.use("/", coursesRouter);
