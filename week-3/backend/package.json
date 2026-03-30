@@ -13,7 +13,8 @@
     "env:copy": "cp .env.example .env || copy .env.example .env",
     "prisma:migrate": "npx prisma migrate dev",
     "prisma:reset": "npx prisma migrate reset --force",
-    "prisma:studio:": "npx prisma studio"
+    "prisma:studio:": "npx prisma studio",
+    "prisma:seed-institutions": "node ./prisma/seeding/institution.js"
   },
   "lint-staged": {
     "*.js": "prettier --write"
@@ -31,7 +32,8 @@
     "@prisma/client": "^6.19.2",
     "compression": "^1.8.1",
     "cors": "^2.8.6",
-    "express": "^5.2.1"
+    "express": "^5.2.1",
+    "joi": "^18.1.1"
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",

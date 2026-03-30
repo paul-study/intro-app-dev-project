@@ -1,0 +1,19 @@
+# GET http://localhost:3000/api/institutions
+
+# POST http://localhost:3000/api/institutions
+# content-type: application/json
+
+# {
+#   "name": "Otago Polytechnic",
+#   "region": "Otago",
+#   "country": "New Zealand",
+#   "website": "op.co.nz",
+#   "emailAddress": "me@op.com"
+# }
+
+PUT http://localhost:3000/api/institutions/0b26f749-6b24-4fa5-ac56-a5d0499a2472
+content-type: application/json
+
+{
+    
+}

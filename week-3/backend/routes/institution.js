@@ -8,12 +8,17 @@ import {
   deleteInstitution,
 } from "../controllers/institution.js";
 
+import {
+  validatePostInstitution,
+  validatePutInstitution,
+} from "../middleware/validation/institution.js";
+
 const router = express.Router();
 
-router.post("/", createInstitution);
+router.post("/",validatePostInstitution, createInstitution);
 router.get("/", getInstitutions);
 router.get("/:id", getInstitution);
-router.put("/:id", updateInstitution);
+router.put("/:id", validatePutInstitution, updateInstitution);
 router.put("/", (req, res) => {
   return res.status(400).json({
     message: "id is required in the URL parameter",
