@@ -2,6 +2,12 @@ const rbac = (requiredRole) => {
   return (req, res, next) => {
     const { user } = req;
 
+    if (process.env.NODE_ENV !== "development") {
+        return res
+        .status(403)
+        .json({message: "NODE_ENV is not set to development" });
+    }
+
     if (!user || !user.role) {
       return res
         .status(403)

@@ -13,6 +13,9 @@ const register = async (req, res) => {
     if (user) {
       return res.status(409).json({ message: "User already exists" });
     }
+    if (user.role !== "STUDENT") {
+        return res.status(409).json({ message: "You need to register with student role" })
+    }
 
     // Hash the password with a unique salt
     const salt = await bcryptjs.genSalt();

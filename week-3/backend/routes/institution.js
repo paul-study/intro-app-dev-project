@@ -28,8 +28,8 @@ router.post(
   createInstitution,
 );
 
-router.get("/", rateLimiter, getInstitutions);
-router.get("/:id", rateLimiter, getInstitution);
+// router.get("/", rateLimiter, getInstitutions);
+// router.get("/:id", rateLimiter, getInstitution);
 
 // router.post("/", validatePostInstitution, jwtAuth, createInstitution);
 // router.post("/",validatePostInstitution, createInstitution);

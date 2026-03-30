@@ -31,7 +31,7 @@
 
 POST http://localhost:3000/api/institutions
 Content-Type: application/json
-Authorization: Bearer MySuperSecretKeyChangeInProduction256Bits
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6ImUzZDJjMWQxLWYxNjQtNDViNi04OGIwLWFlOWQwMjc1MTVkYSIsInJvbGUiOiJBRE1JTiIsImlhdCI6MTc3NDgzNDU2MiwiZXhwIjoxNzc0ODM4MTYyfQ.xSe7d2-3ZZ53EzloNGsolNlqs93YLnNoN5Y6_NKf9P8
 
  {
   "name": "Otago Polytechnic",
@@ -41,3 +41,11 @@ Authorization: Bearer MySuperSecretKeyChangeInProduction256Bits
   "emailAddress": "me@op.com",
   "userId": "3c351041-b894-4561-bb6e-bfd9d7f1e110"
 }
+
+# POST http://localhost:3000/api/auth/login
+# Content-Type: application/json
+
+# {
+#   "emailAddress": "jane.doe@example.com",
+#   "password": "janedoe123"
+# }
