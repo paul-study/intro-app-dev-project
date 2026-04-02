@@ -6,14 +6,13 @@ import prisma from "../prisma/db.js";
 const register = async (req, res) => {
   try {
     const { firstName, lastName, emailAddress, password, role } = req.body;
-
     // Check if user already exists
     const user = await prisma.user.findUnique({ where: { emailAddress } });
 
     if (user) {
       return res.status(409).json({ message: "User already exists" });
     }
-    if (user.role !== "STUDENT") {
+    if (role !== "STUDENT") {
         return res.status(409).json({ message: "You need to register with student role" })
     }
 

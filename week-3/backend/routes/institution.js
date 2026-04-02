@@ -20,19 +20,20 @@ import rateLimiter from "../middleware/rateLimiter.js";
 
 const router = express.Router();
 
-router.post(
-  "/",
-  validatePostInstitution,
-  jwtAuth,
-  rbac("ADMIN"),
-  createInstitution,
-);
+// router.post(
+//   "/",
+//   validatePostInstitution,
+//   jwtAuth,
+//   rbac("ADMIN"),
+//   createInstitution,
+// );
 
 // router.get("/", rateLimiter, getInstitutions);
 // router.get("/:id", rateLimiter, getInstitution);
 
 // router.post("/", validatePostInstitution, jwtAuth, createInstitution);
-// router.post("/",validatePostInstitution, createInstitution);
+router.post("/",validatePostInstitution, createInstitution);
+
 router.get("/", getInstitutions);
 router.get("/:id", getInstitution);
 router.put("/:id", validatePutInstitution, updateInstitution);
