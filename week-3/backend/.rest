@@ -29,23 +29,27 @@
 #   "role": "STUDENT"
 # }
 
-# POST http://localhost:3000/api/institutions
-# Content-Type: application/json
-# Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6ImUzZDJjMWQxLWYxNjQtNDViNi04OGIwLWFlOWQwMjc1MTVkYSIsInJvbGUiOiJBRE1JTiIsImlhdCI6MTc3NDgzNDU2MiwiZXhwIjoxNzc0ODM4MTYyfQ.xSe7d2-3ZZ53EzloNGsolNlqs93YLnNoN5Y6_NKf9P8
+POST http://localhost:3000/api/institutions
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6ImZhN2EyZTcwLTE4NDAtNDJjZS1iZTY2LWJiOWYzZTM4NGU4YyIsInJvbGUiOiJTVFVERU5UIiwiaWF0IjoxNzc1MDkyMTQ4LCJleHAiOjE3NzUwOTU3NDh9.Pagj8jgS2mzu6g8IC11j-u-VVq0lA9hmfnfrwQUWhYU
+ 
+{
+  "name": "Otago Polytechnic2",
+  "region": "Otago",
+  "country": "New Zealand",
+  "website": "op.co.nz",
+  "emailAddress": "me@op.com",
+  "userId": "fa7a2e70-1840-42ce-be66-bb9f3e384e8c"
+}
 
-#  {
-#   "name": "Otago Polytechnic",
-#   "region": "Otago",
-#   "country": "New Zealand",
-#   "website": "op.co.nz",
-#   "emailAddress": "me@op.com",
-#   "userId": "3c351041-b894-4561-bb6e-bfd9d7f1e110"
+# POST http://localhost:3000/api/auth/login
+# Content-Type: application/json
+
+# {
+#   "emailAddress": "tim.doe@example.com",
+#   "password": "timdoe123"
 # }
 
-POST http://localhost:3000/api/auth/login
-Content-Type: application/json
 
-{
-  "emailAddress": "tim.doe@example.com",
-  "password": "timdoe123"
-}
+
+# eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6ImZhN2EyZTcwLTE4NDAtNDJjZS1iZTY2LWJiOWYzZTM4NGU4YyIsInJvbGUiOiJTVFVERU5UIiwiaWF0IjoxNzc1MDkyMTQ4LCJleHAiOjE3NzUwOTU3NDh9.Pagj8jgS2mzu6g8IC11j-u-VVq0lA9hmfnfrwQUWhYU

@@ -1,4 +1,5 @@
 import express from "express";
+import rbac from "../middleware/rbac.js";
 
 import {
     createDepartment,
@@ -10,17 +11,17 @@ import {
 
 const router = express.Router();
 
-router.post("/", createDepartment);
-router.get("/", getDepartments);
-router.get("/:id", getDepartment);
-router.put("/:id", updateDepartment);
-router.put("/", (req, res) => {
+router.post("/",rbac(["ADMIN","STAFF"]), createDepartment);
+router.get("/",rbac(["ADMIN","STAFF","STUDENT"]), getDepartments);
+router.get("/:id",rbac(["ADMIN","STAFF","STUDENT"]), getDepartment);
+router.put("/:id",rbac(["ADMIN","STAFF"]), updateDepartment);
+router.put("/",rbac(["ADMIN","STAFF"]), (req, res) => {
   return res.status(400).json({
     message: "id is required in the URL parameter",
   });
 });
-router.delete("/:id", deleteDepartment);
-router.delete("/", (req, res) => {
+router.delete("/:id",rbac(["ADMIN"]), deleteDepartment);
+router.delete("/",rbac(["ADMIN"]), (req, res) => {
   return res.status(400).json({
     message: "id is required in the URL parameter",
   });

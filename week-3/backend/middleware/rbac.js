@@ -14,13 +14,24 @@ const rbac = (requiredRole) => {
         .json({ message: "Forbidden. User is not authenticated" });
     }
 
-    if (user.role !== requiredRole) {
+    if (requiredRole.includes(user.role)){
+      next()
+    } else {
       return res.status(403).json({
         message: `Forbidden. Insufficient privileges for role: ${user.role}`,
       });
     }
 
-    next();
+    
+  
+    
+    // if (user.role !== requiredRole) {
+    //   return res.status(403).json({
+    //     message: `Forbidden. Insufficient privileges for role: ${user.role}`,
+    //   });
+    // }
+
+    // next();
   };
 };
 
