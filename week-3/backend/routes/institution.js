@@ -1,5 +1,8 @@
 import express from "express";
 
+import jwtAuth from "../middleware/jwtAuth.js";
+import rbac from "../middleware/rbac.js";
+
 import {
   createInstitution,
   getInstitutions,
@@ -13,19 +16,34 @@ import {
   validatePutInstitution,
 } from "../middleware/validation/institution.js";
 
+import rateLimiter from "../middleware/rateLimiter.js";
+
 const router = express.Router();
 
-router.post("/",validatePostInstitution, createInstitution);
-router.get("/", getInstitutions);
-router.get("/:id", getInstitution);
-router.put("/:id", validatePutInstitution, updateInstitution);
-router.put("/", (req, res) => {
+router.post(
+  "/",
+  validatePostInstitution,
+  jwtAuth,
+  rbac(["ADMIN","STAFF","STUDENT"]),
+  createInstitution,
+);
+
+// router.get("/", rateLimiter, getInstitutions);
+// router.get("/:id", rateLimiter, getInstitution);
+
+// router.post("/", validatePostInstitution, jwtAuth, createInstitution);
+// router.post("/",validatePostInstitution, createInstitution);
+
+router.get("/",rbac(["ADMIN","STAFF","STUDENT"]), getInstitutions);
+router.get("/:id",rbac(["ADMIN","STAFF","STUDENT"]), getInstitution);
+router.put("/:id",rbac(["ADMIN","STAFF"]), validatePutInstitution, updateInstitution);
+router.put("/",rbac(["ADMIN","STAFF"]), (req, res) => {
   return res.status(400).json({
     message: "id is required in the URL parameter",
   });
 });
-router.delete("/:id", deleteInstitution);
-router.delete("/", (req, res) => {
+router.delete("/:id",rbac(["ADMIN"]), deleteInstitution);
+router.delete("/",rbac(["ADMIN"]), (req, res) => {
   return res.status(400).json({
     message: "id is required in the URL parameter",
   });

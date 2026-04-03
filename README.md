@@ -37,3 +37,6 @@ GET	        /api/institutions	        Get all institutions
 GET     	/api/institutions/:id	    Get an institution by ID
 PUT	        /api/institutions/:id   	Update an institution by ID
 DELETE	    /api/institutions/:id   	Delete an institution by ID
+
+POST        http://localhost:3000/api/auth/register          registers a user
+GET         http://localhost:3000/api/auth/login         logs in and gets a jwt

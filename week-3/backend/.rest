@@ -11,9 +11,45 @@
 #   "emailAddress": "me@op.com"
 # }
 
-PUT http://localhost:3000/api/institutions/0b26f749-6b24-4fa5-ac56-a5d0499a2472
-content-type: application/json
+# PUT http://localhost:3000/api/institutions/0b26f749-6b24-4fa5-ac56-a5d0499a2472
+# content-type: application/json
 
-{
+# {
     
+# }
+
+# POST  http://localhost:3000/api/auth/register
+# content-type: application/json
+
+# {
+#   "firstName": "tim",
+#   "lastName": "timtom",
+#   "emailAddress": "tim.doe@example.com",
+#   "password": "timdoe123",
+#   "role": "STUDENT"
+# }
+
+POST http://localhost:3000/api/institutions
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6ImZhN2EyZTcwLTE4NDAtNDJjZS1iZTY2LWJiOWYzZTM4NGU4YyIsInJvbGUiOiJTVFVERU5UIiwiaWF0IjoxNzc1MDkyMTQ4LCJleHAiOjE3NzUwOTU3NDh9.Pagj8jgS2mzu6g8IC11j-u-VVq0lA9hmfnfrwQUWhYU
+ 
+{
+  "name": "Otago Polytechnic2",
+  "region": "Otago",
+  "country": "New Zealand",
+  "website": "op.co.nz",
+  "emailAddress": "me@op.com",
+  "userId": "fa7a2e70-1840-42ce-be66-bb9f3e384e8c"
 }
+
+# POST http://localhost:3000/api/auth/login
+# Content-Type: application/json
+
+# {
+#   "emailAddress": "tim.doe@example.com",
+#   "password": "timdoe123"
+# }
+
+
+
+# eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6ImZhN2EyZTcwLTE4NDAtNDJjZS1iZTY2LWJiOWYzZTM4NGU4YyIsInJvbGUiOiJTVFVERU5UIiwiaWF0IjoxNzc1MDkyMTQ4LCJleHAiOjE3NzUwOTU3NDh9.Pagj8jgS2mzu6g8IC11j-u-VVq0lA9hmfnfrwQUWhYU
