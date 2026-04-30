@@ -1,0 +1,31 @@
+Resource,HTTP Method,Endpoint URL,Description,Authentication Required,RBAC Required and Roles,Path Parameters,Query Parameters,Body Parameters
+Users,POST,/api/users,Create a new user,Yes,Yes - User,None,None,"username (string, required), name (string, required), email (string, required), password_hash (string, required), role (enum: user/admin, required), gender (enum: male/female/unknown, required)"
+Users,GET,/api/users,List users,Yes,Yes - User,None,None,None
+Users,GET,/api/users/{user_id},Get user by ID,Yes,Yes - User,user_id,None,None
+Users,PATCH,/api/users/{user_id},Update user by ID,Yes,Yes - User,user_id,None,"username (string), name (string), email (string), password_hash (string), role (enum: user/admin), gender (enum: male/female/unknown)"
+Users,DELETE,/api/users/{user_id},Delete user by ID,Yes,Yes - User,user_id,None,None
+User Settings,POST,/api/user-settings,Create user settings,Yes,Yes - User,None,None,"user_id (string, required, unique), theme_color (string), time_zone (string), language (string), notifications_enabled (boolean), status_message (string), profile_image (string)"
+User Settings,GET,/api/user-settings,List user settings,Yes,Yes - User,None,None,None
+User Settings,GET,/api/user-settings/{settings_id},Get user settings by ID,Yes,Yes - User,settings_id,None,None
+User Settings,PATCH,/api/user-settings/{settings_id},Update user settings by ID,Yes,Yes - User,settings_id,None,"theme_color (string), time_zone (string), language (string), notifications_enabled (boolean), status_message (string), profile_image (string)"
+User Settings,DELETE,/api/user-settings/{settings_id},Delete user settings by ID,Yes,Yes - User,settings_id,None,None
+Conversations,POST,/api/conversations,Create a new conversation,Yes,Yes - User,None,None,"title (string, required), created_at (datetime, required), is_group (boolean, required), chat_type (enum: direct message/group chat, required), creator_id (string, required)"
+Conversations,GET,/api/conversations,List conversations,Yes,Yes - User,None,None,None
+Conversations,GET,/api/conversations/{conversation_id},Get conversation by ID,Yes,Yes - User,conversation_id,None,None
+Conversations,PATCH,/api/conversations/{conversation_id},Update conversation by ID,Yes,Yes - User,conversation_id,None,"title (string), is_group (boolean), chat_type (enum: direct message/group chat)"
+Conversations,DELETE,/api/conversations/{conversation_id},Delete conversation by ID,Yes,Yes - User,conversation_id,None,None
+Messages,POST,/api/messages,Create a new message,Yes,Yes - User,None,None,"conversation_id (string, required), sender_id (string, required), content (string, required), is_read (boolean), is_edited (boolean), message_status (enum: sent/delivered/read/failed, required), timestamp (datetime, required)"
+Messages,GET,/api/messages,List messages,Yes,Yes - User,None,None,None
+Messages,GET,/api/messages/{message_id},Get message by ID,Yes,Yes - User,message_id,None,None
+Messages,PATCH,/api/messages/{message_id},Update message by ID,Yes,Yes - User,message_id,None,"content (string), is_read (boolean), is_edited (boolean), message_status (enum: sent/delivered/read/failed)"
+Messages,DELETE,/api/messages/{message_id},Delete message by ID,Yes,Yes - User,message_id,None,None
+Conversation Participants,POST,/api/conversation-participants,Add participant to conversation,Yes,Yes - User,None,None,"conversation_id (string, required), user_id (string, required), is_admin (enum: user/admin), is_muted (boolean), nickname (string), joined_at (datetime)"
+Conversation Participants,GET,/api/conversation-participants,List conversation participants,Yes,Yes - User,None,None,None
+Conversation Participants,GET,/api/conversation-participants/{participant_id},Get participant by ID,Yes,Yes - User,participant_id,None,None
+Conversation Participants,PATCH,/api/conversation-participants/{participant_id},Update participant by ID,Yes,Yes - User,participant_id,None,"is_admin (enum: user/admin), is_muted (boolean), nickname (string)"
+Conversation Participants,DELETE,/api/conversation-participants/{participant_id},Remove participant by ID,Yes,Yes - User,participant_id,None,None
+Friendships,POST,/api/friendships,Create friendship,Yes,Yes - User,None,None,"user_id_1 (string, required), user_id_2 (string, required), status (enum: pending/accepted/blocked, required), is_favorite (boolean), created_at (datetime, required)"
+Friendships,GET,/api/friendships,List friendships,Yes,Yes - User,None,None,None
+Friendships,GET,/api/friendships/{friendship_id},Get friendship by ID,Yes,Yes - User,friendship_id,None,None
+Friendships,PATCH,/api/friendships/{friendship_id},Update friendship by ID,Yes,Yes - User,friendship_id,None,"status (enum: pending/accepted/blocked), is_favorite (boolean)"
+Friendships,DELETE,/api/friendships/{friendship_id},Delete friendship by ID,Yes,Yes - User,friendship_id,None,None
