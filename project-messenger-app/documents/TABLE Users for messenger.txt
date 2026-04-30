@@ -1,0 +1,69 @@
+//mermaid live
+
+TABLE: User
+- user_id (Primary Key)
+- username
+- name
+- email
+- password_hash
+- role
+- gender
+
+TABLE: UserSettings
+- settings_id (Primary Key)
+- user_id (Foreign Key - UNIQUE)
+- theme_color 
+- time_zone
+- language
+- notifications_enabled (Boolean)
+- status_message
+- profile_image
+1 to 1-One user has exactly one settings profile and that settings profile belongs to exactly one user. 
+
+TABLE: Conversations
+- conversation_id (Primary Key)
+- title 
+- created_at
+- is_group (bool)
+- chat_type (direct message - group chat)
+- creator_id 
+1 to many- One conversation contains many messages but a specific message belongs to only one conversation
+
+TABLE: Messages
+- message_id (Primary Key)
+- conversation_id (Foreign Key)
+- sender_id (Foreign Key -> User.user_id)
+- content 
+- is_read
+- is_edited
+- message_status (sent - delivered - read - failed)
+- timestamp
+1 to many- One user can send many messages but a specific message is sent by only one user
+
+TABLE: ConversationParticipants (Join Table)
+- participant_id (Primary Key)
+- conversation_id (Foreign Key)
+- user_id (Foreign Key)
+- is_admin (user - admin)
+- is_muted
+- nickname
+- joined_at
+many to many- A user can be in many conversations and a conversation can have many users
+
+TABLE: Friendships
+- friendship_id (Primary Key)
+- user_id_1 (Foreign Key -> User.user_id)
+- user_id_2 (Foreign Key -> User.user_id)
+- status (String - e.g., 'pending', 'accepted', 'blocked')
+- is_favorite
+- created_at
+many to many- a user has many friends and is a friend to many users
+
+
+enums
+friendship status, pending - accepted - blocked
+user role, user - admin
+user gender, male - female - unknown
+messages message status, sent - delivered - read - failed
+conversations chat type, direct message - group chat
+conversation participants is admin, user - admin
