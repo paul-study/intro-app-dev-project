@@ -18,6 +18,11 @@ enum Role {
   ADMIN
 }
 
+enum Gender {
+  MALE
+  FEMALE
+}
+
 model User {
   id          String        @id @default(uuid())
   username    String        @unique
@@ -25,5 +30,5 @@ model User {
   email       String        @unique
   password    String
   role        Role          @default(USER)
-  gender      String        
+  gender      Gender        
 }
