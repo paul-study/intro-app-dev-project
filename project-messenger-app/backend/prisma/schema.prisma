@@ -1,9 +1,3 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
-
 generator client {
   provider = "prisma-client-js"
 }
@@ -21,6 +15,7 @@ enum Role {
 enum Gender {
   MALE
   FEMALE
+  UNKNOWN
 }
 
 enum FriendshipStatus {
@@ -41,6 +36,11 @@ enum ChatType {
   GROUP
 }
 
+enum ParticipantRole {
+  USER
+  ADMIN
+}
+
 model User {
   id       String @id @default(uuid())
   username String @unique
@@ -50,12 +50,17 @@ model User {
   role     Role   @default(USER)
   gender   Gender
 
-  settings UserSettings? @relation("UserToSettings")
+  settings             UserSettings?
+  createdConversations Conversation[]            @relation("ConversationCreator")
+  sentMessages         Message[]                 @relation("MessageSender")
+  participations       ConversationParticipant[]
+  friendshipsAsUser1   Friendship[]              @relation("FriendshipUser1")
+  friendshipsAsUser2   Friendship[]              @relation("FriendshipUser2")
 }
 
 model UserSettings {
   id                   String   @id @default(uuid())
-  user                 User     @relation("UserToSettings", fields: [userId], references: [id], onDelete: Cascade)
+  user                 User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId               String   @unique
   themeColor           String?
   timeZone             String?
@@ -65,4 +70,69 @@ model UserSettings {
   profileImage         String?
   createdAt            DateTime @default(now())
   updatedAt            DateTime @updatedAt
+}
+
+model Conversation {
+  id        String   @id @default(uuid())
+  title     String?
+  createdAt DateTime @default(now())
+  isGroup   Boolean  @default(false)
+  chatType  ChatType @default(DIRECT)
+
+  creator   User?   @relation("ConversationCreator", fields: [creatorId], references: [id], onDelete: SetNull)
+  creatorId String?
+
+  messages     Message[]
+  participants ConversationParticipant[]
+}
+
+model Message {
+  id             String       @id @default(uuid())
+  conversation   Conversation @relation(fields: [conversationId], references: [id], onDelete: Cascade)
+  conversationId String
+
+  sender   User   @relation("MessageSender", fields: [senderId], references: [id], onDelete: Cascade)
+  senderId String
+
+  content       String
+  isRead        Boolean       @default(false)
+  isEdited      Boolean       @default(false)
+  messageStatus MessageStatus @default(SENT)
+  timestamp     DateTime      @default(now())
+
+  @@index([conversationId])
+  @@index([senderId])
+}
+
+model ConversationParticipant {
+  id             String       @id @default(uuid())
+  conversation   Conversation @relation(fields: [conversationId], references: [id], onDelete: Cascade)
+  conversationId String
+
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId String
+
+  participantRole ParticipantRole @default(USER)
+  isMuted         Boolean         @default(false)
+  nickname        String?
+  joinedAt        DateTime        @default(now())
+
+  @@unique([conversationId, userId])
+  @@index([userId])
+}
+
+model Friendship {
+  id      String @id @default(uuid())
+  user1   User   @relation("FriendshipUser1", fields: [userId1], references: [id], onDelete: Cascade)
+  userId1 String
+  user2   User   @relation("FriendshipUser2", fields: [userId2], references: [id], onDelete: Cascade)
+  userId2 String
+
+  status     FriendshipStatus @default(PENDING)
+  isFavorite Boolean          @default(false)
+  createdAt  DateTime         @default(now())
+
+  @@unique([userId1, userId2])
+  @@index([userId1])
+  @@index([userId2])
 }
