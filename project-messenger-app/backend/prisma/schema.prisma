@@ -10,7 +10,7 @@ generator client {
 
 datasource db {
   provider = "postgresql"
-  url = env("DATABASE_URL")
+  url      = env("DATABASE_URL")
 }
 
 enum Role {
@@ -23,12 +23,46 @@ enum Gender {
   FEMALE
 }
 
+enum FriendshipStatus {
+  PENDING
+  ACCEPTED
+  BLOCKED
+}
+
+enum MessageStatus {
+  SENT
+  DELIVERED
+  READ
+  FAILED
+}
+
+enum ChatType {
+  DIRECT
+  GROUP
+}
+
 model User {
-  id          String        @id @default(uuid())
-  username    String        @unique
-  name        String        
-  email       String        @unique
-  password    String
-  role        Role          @default(USER)
-  gender      Gender        
+  id       String @id @default(uuid())
+  username String @unique
+  name     String
+  email    String @unique
+  password String
+  role     Role   @default(USER)
+  gender   Gender
+
+  settings UserSettings? @relation("UserToSettings")
+}
+
+model UserSettings {
+  id                   String   @id @default(uuid())
+  user                 User     @relation("UserToSettings", fields: [userId], references: [id], onDelete: Cascade)
+  userId               String   @unique
+  themeColor           String?
+  timeZone             String?
+  language             String?
+  notificationsEnabled Boolean  @default(true)
+  statusMessage        String?
+  profileImage         String?
+  createdAt            DateTime @default(now())
+  updatedAt            DateTime @updatedAt
 }
