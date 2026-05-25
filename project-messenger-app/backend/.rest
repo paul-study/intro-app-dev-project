@@ -11,5 +11,16 @@
 # }
 
 
-# GET http://localhost:3000/api/users/08230e17-f586-4387-ac5d-c7466e2b2eff
+# GET http://localhost:3000/api/users/a9fd4013-18e8-4360-9384-5381078d5d0e
+
+
+# PUT http://localhost:3000/api/users/a9fd4013-18e8-4360-9384-5381078d5d0e
+# Content-Type: application/json
+
+# {
+#     "name": "tommy man",
+#     "email": "tom321@tom.com"
+# }
+
+# DELETE http://localhost:3000/api/users/a9fd4013-18e8-4360-9384-5381078d5d0e
 
