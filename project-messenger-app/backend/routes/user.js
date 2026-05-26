@@ -7,13 +7,20 @@ import {
     updateUser,
     deleteUser
 } from "../controllers/user.js"
+import {
+  validatePostUser,
+  validatePutUser,
+} from "../middleware/validation/user.js";
+
 
 const router = express.Router();
 
-router.post("/", createUser);
+// router.post("/", createUser);
+router.post("/", validatePostUser, createUser);
 router.get("/", getUsers);
 router.get("/:id", getUser);
-router.put("/:id", updateUser);
+// router.put("/:id", updateUser);
+router.put("/:id", validatePutUser, updateUser);
 router.put("/", (req, res) => {
   return res.status(400).json({
     message: "id is required in the URL parameter",
