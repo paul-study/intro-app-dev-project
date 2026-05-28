@@ -1,4 +1,5 @@
 // Write your import code here
+import sinon from "sinon";
 
 describe("Quiz Controller", () => {
   afterEach(() => sinon.restore());

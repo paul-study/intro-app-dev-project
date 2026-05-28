@@ -18,6 +18,6 @@ export const stubCategoryRepo = () => ({
   create: sinon.stub(categoryRepository, "create"),
   findAll: sinon.stub(categoryRepository, "findAll"),
   findById: sinon.stub(categoryRepository, "findById"),
-//   update: sinon.stub(categoryRepository, "update"),
+  update: sinon.stub(categoryRepository, "update"),
   delete: sinon.stub(categoryRepository, "delete"),
 });
