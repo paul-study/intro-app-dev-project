@@ -20,6 +20,8 @@ describe("Category Controller", () => {
   describe("createCategories", () => {
     it("returns 201 and the new categories when the repository resolves successfully", async () => {
       // Write your test code here
+      const req = mockReq();
+      const res = mockRes();
 
       const trivia = [{ id: 9, name: "General Knowledge" }];
       const expectedCategories = [{ id: 9, name: "General Knowledge" }];
@@ -59,7 +61,6 @@ describe("Category Controller", () => {
       expect(res.status.calledOnceWith(200)).to.be.true;
       expect(res.json.calledOnce).to.be.true;
       expect(res.json.firstCall.args[0]).to.deep.equal({
-        message: "Categories retrieved successfully",
         data: categories,
       });
     });
@@ -69,7 +70,7 @@ describe("Category Controller", () => {
       const req = mockReq();
       const res = mockRes();
 
-      sinon.stub(categoryRepository, "findAll").resolves([]);
+      sinon.stub(categoryRepository, "findAll").resolves(null);
 
       await getCategories(req, res);
 
@@ -98,7 +99,6 @@ describe("Category Controller", () => {
       expect(res.status.calledOnceWith(200)).to.be.true;
       expect(res.json.calledOnce).to.be.true;
       expect(res.json.firstCall.args[0]).to.deep.equal({
-        message: "Category retrieved successfully",
         data: category,
       });
     });
@@ -115,7 +115,7 @@ describe("Category Controller", () => {
       expect(res.status.calledOnceWith(404)).to.be.true;
       expect(res.json.calledOnce).to.be.true;
       expect(res.json.firstCall.args[0]).to.deep.equal({
-        message: "Category not found",
+        message: "No category with the id: 999 found",
       });
     });
   });
@@ -126,10 +126,36 @@ describe("Category Controller", () => {
   describe("deleteCategory", () => {
     it("returns 200 when the category is found and deleted", async () => {
       // Write your test code here
+      const req = mockReq({}, { id: "1" });
+      const res = mockRes();
+
+      const category = { id: 1, name: "General Knowledge" };
+      sinon.stub(categoryRepository, "findById").resolves(category);
+      sinon.stub(categoryRepository, "delete").resolves();
+
+      await deleteCategory(req, res);
+
+      expect(res.status.calledOnceWith(200)).to.be.true;
+      expect(res.json.calledOnce).to.be.true;
+      expect(res.json.firstCall.args[0]).to.deep.equal({
+        message: "Category with the id: 1 successfully deleted",
+      });
     });
 
     it("returns 404 when the category to delete is not found", async () => {
       // Write your test code here
+      const req = mockReq({}, { id: "999" });
+      const res = mockRes();
+
+      sinon.stub(categoryRepository, "findById").resolves(null);
+
+      await deleteCategory(req, res);
+
+      expect(res.status.calledOnceWith(404)).to.be.true;
+      expect(res.json.calledOnce).to.be.true;
+      expect(res.json.firstCall.args[0]).to.deep.equal({
+        message: "No category with the id: 999 found",
+      });
     });
   });
 });

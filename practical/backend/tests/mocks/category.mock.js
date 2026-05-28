@@ -15,9 +15,8 @@ export const mockRes = () => {
 };
 
 export const stubCategoryRepo = () => ({
-  create: sinon.stub(categoryRepository, "create"),
+  createMany: sinon.stub(categoryRepository, "createMany"),
   findAll: sinon.stub(categoryRepository, "findAll"),
   findById: sinon.stub(categoryRepository, "findById"),
-  update: sinon.stub(categoryRepository, "update"),
   delete: sinon.stub(categoryRepository, "delete"),
 });
