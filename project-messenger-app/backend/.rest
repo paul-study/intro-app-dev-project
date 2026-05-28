@@ -11,7 +11,7 @@
 # }
 
 
-# GET http://localhost:3000/api/users/a9fd4013-18e8-4360-9384-5381078d5d0e
+# GET http://localhost:3000/api/users/8be11c7c-a639-4b2b-ab41-32cfa16ccfbd
 
 
 # PUT http://localhost:3000/api/users/a9fd4013-18e8-4360-9384-5381078d5d0e
@@ -24,14 +24,15 @@
 
 # DELETE http://localhost:3000/api/users/a9fd4013-18e8-4360-9384-5381078d5d0e
 
-# POST http://localhost:3000/api/users
-# Content-Type: application/json
+POST http://localhost:3000/api/users
+Content-Type: application/json
+Authorization: Bearer YOUR_TOKEN_HERE
 
-# {
-#   "username": "tom",
-#   "name": "tommy",
-#   "email": "tom@tom.com",
-#   "password": "hello123",
-#   "role": "USER",
-#   "gender": "MALE"
-# }
+{
+  "username": "tom",
+  "name": "tommy",
+  "email": "tom@tom.com",
+  "password": "hello123",
+  "role": "USER",
+  "gender": "MALE"
+}

@@ -5,6 +5,7 @@ import compression from "compression";
 import userRoutes from "./routes/user.js"
 
 import isContentTypeApplicationJSON from "./middleware/content-type.js";
+import authRoutes from "./routes/auth.js";
 
 const app = express();
 
@@ -17,6 +18,7 @@ app.use(express.json());
 
 app.use(isContentTypeApplicationJSON); //checking the middleware content type
 
+app.use("/api/auth", authRoutes);
 app.use("/api/users", userRoutes)
 
 app.listen(PORT, () => {

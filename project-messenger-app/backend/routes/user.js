@@ -11,12 +11,14 @@ import {
   validatePostUser,
   validatePutUser,
 } from "../middleware/validation/user.js";
+import jwtAuth from "../middleware/jwtAuth.js";
 
 
 const router = express.Router();
 
 // router.post("/", createUser);
-router.post("/", validatePostUser, createUser);
+// router.post("/", validatePostUser, createUser);
+router.post("/", validatePostUser, jwtAuth, createUser);
 router.get("/", getUsers);
 router.get("/:id", getUser);
 // router.put("/:id", updateUser);
