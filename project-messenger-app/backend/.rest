@@ -78,9 +78,10 @@
 # }
 
 # http://localhost:3000/api/users 
-# "Authorization: Bearer <TOKEN>"
+# Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6ImIxZGQ4NGNiLWRlOGQtNDUxMi1iMTU4LWFlNzE1MjgyNDYzMyIsInVzZXJuYW1lIjoidG9tIiwicm9sZSI6IlVTRVIiLCJpYXQiOjE3ODA0ODEzNDQsImV4cCI6MTc4MDQ4NDk0NH0.yyMyMOHwnv98IFKkD5Yb413hm9-Qtm9612uJNjcN0eU
 
-POST http://localhost:3000/api/auth/logout
-Content-Type: application/json
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6ImIxZGQ4NGNiLWRlOGQtNDUxMi1iMTU4LWFlNzE1MjgyNDYzMyIsInVzZXJuYW1lIjoidG9tIiwicm9sZSI6IlVTRVIiLCJpYXQiOjE3ODA0Nzk2ODIsImV4cCI6MTc4MDQ4MzI4Mn0.3aWFFXEMGdzpl6E9t40oZKFKV_15HdDZsN48Odr1aeU
+# POST http://localhost:3000/api/auth/logout
+# Content-Type: application/json
+# Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6ImIxZGQ4NGNiLWRlOGQtNDUxMi1iMTU4LWFlNzE1MjgyNDYzMyIsInVzZXJuYW1lIjoidG9tIiwicm9sZSI6IlVTRVIiLCJpYXQiOjE3ODA0ODEzNDQsImV4cCI6MTc4MDQ4NDk0NH0.yyMyMOHwnv98IFKkD5Yb413hm9-Qtm9612uJNjcN0eU
 
+# http://localhost:3000/health

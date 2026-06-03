@@ -6,6 +6,7 @@ import userRoutes from "./routes/user.js"
 
 import isContentTypeApplicationJSON from "./middleware/content-type.js";
 import authRoutes from "./routes/auth.js";
+import healthRoutes from "./routes/health.js";
 
 const app = express();
 
@@ -20,6 +21,7 @@ app.use(isContentTypeApplicationJSON); //checking the middleware content type
 
 app.use("/api/auth", authRoutes);
 app.use("/api/users", userRoutes)
+app.use("/health", healthRoutes);
 
 app.listen(PORT, () => {
   console.log(
