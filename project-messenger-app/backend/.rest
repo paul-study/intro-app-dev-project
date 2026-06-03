@@ -85,3 +85,24 @@
 # Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6ImIxZGQ4NGNiLWRlOGQtNDUxMi1iMTU4LWFlNzE1MjgyNDYzMyIsInVzZXJuYW1lIjoidG9tIiwicm9sZSI6IlVTRVIiLCJpYXQiOjE3ODA0ODEzNDQsImV4cCI6MTc4MDQ4NDk0NH0.yyMyMOHwnv98IFKkD5Yb413hm9-Qtm9612uJNjcN0eU
 
 # http://localhost:3000/health
+
+# POST http://localhost:3000/api/users
+# Content-Type: application/json
+
+# {"username":"ab","name":"A","email":"bad","role":"USER","gender":"MALE"}
+
+
+
+# Conversation end points
+
+# POST http://localhost:3000/api/conversations
+# Content-Type: application/json
+# Authorization: Bearer <TOKEN>
+
+# {"title":"Project chat","isGroup":true,"chatType":"GROUP"}
+
+
+
+
+
+
