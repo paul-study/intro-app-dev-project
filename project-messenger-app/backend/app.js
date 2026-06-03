@@ -9,6 +9,7 @@ import authRoutes from "./routes/auth.js";
 import healthRoutes from "./routes/health.js";
 
 import conversationRoutes from "./routes/conversations.js";
+import messageRoutes from "./routes/messages.js";
 
 const app = express();
 
@@ -25,6 +26,7 @@ app.use("/api/auth", authRoutes);
 app.use("/api/users", userRoutes)
 app.use("/health", healthRoutes);
 app.use("/api/conversations", conversationRoutes);
+app.use("/api/messages", messageRoutes);
 
 app.listen(PORT, () => {
   console.log(
