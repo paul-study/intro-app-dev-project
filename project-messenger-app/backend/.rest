@@ -24,35 +24,63 @@
 
 # DELETE http://localhost:3000/api/users/a9fd4013-18e8-4360-9384-5381078d5d0e
 
-POST http://localhost:3000/api/users
+# POST http://localhost:3000/api/users
+# Content-Type: application/json
+# Authorization: Bearer YOUR_TOKEN_HERE
+
+# {
+#   "username": "tom",
+#   "name": "tommy",
+#   "email": "tom@tom.com",
+#   "password": "hello123",
+#   "role": "USER",
+#   "gender": "MALE"
+# }
+
+# POST http://localhost:3000/api/auth/register
+# Content-Type: application/json
+
+# {
+#   "username": "tom",
+#   "name": "tommy",
+#   "email": "tom@tom.com",
+#   "password": "hello123",
+#   "role": "USER",
+#   "gender": "MALE"
+# }
+
+# POST http://localhost:3000/api/auth/login
+# Content-Type: application/json
+
+# {
+#   "email": "admin@example.com",
+#   "password": "password123"
+# }
+
+# {
+#   "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6ImIxZGQ4NGNiLWRlOGQtNDUxMi1iMTU4LWFlNzE1MjgyNDYzMyIsInVzZXJuYW1lIjoidG9tIiwicm9sZSI6IlVTRVIiLCJpYXQiOjE3ODA0Nzk2ODIsImV4cCI6MTc4MDQ4MzI4Mn0.3aWFFXEMGdzpl6E9t40oZKFKV_15HdDZsN48Odr1aeU",
+# "user": {
+#     "id": "b1dd84cb-de8d-4512-b158-ae7152824633",
+#     "username": "tom",
+#     "name": "tommy",
+#     "email": "tom@tom.com",
+#     "role": "USER",
+#     "gender": "MALE"
+#   }
+# }
+
+# POST http://localhost:3000/api/auth/login
+# Content-Type: application/json
+
+# {
+#   "email": "tom@tom.com",
+#   "password": "hello123"
+# }
+
+# http://localhost:3000/api/users 
+# "Authorization: Bearer <TOKEN>"
+
+POST http://localhost:3000/api/auth/logout
 Content-Type: application/json
-Authorization: Bearer YOUR_TOKEN_HERE
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6ImIxZGQ4NGNiLWRlOGQtNDUxMi1iMTU4LWFlNzE1MjgyNDYzMyIsInVzZXJuYW1lIjoidG9tIiwicm9sZSI6IlVTRVIiLCJpYXQiOjE3ODA0Nzk2ODIsImV4cCI6MTc4MDQ4MzI4Mn0.3aWFFXEMGdzpl6E9t40oZKFKV_15HdDZsN48Odr1aeU
 
-{
-  "username": "tom",
-  "name": "tommy",
-  "email": "tom@tom.com",
-  "password": "hello123",
-  "role": "USER",
-  "gender": "MALE"
-}
-
-POST http://localhost:3000/api/auth/register
-Content-Type: application/json
-
-{
-  "username": "tom",
-  "name": "tommy",
-  "email": "tom@tom.com",
-  "password": "hello123",
-  "role": "USER",
-  "gender": "MALE"
-}
-
-POST http://localhost:3000/api/auth/login
-Content-Type: application/json
-
-{
-  "email": "admin@example.com",
-  "password": "password123"
-}
