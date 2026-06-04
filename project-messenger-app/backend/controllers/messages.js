@@ -123,7 +123,9 @@ export const updateMessage = async (req, res) => {
 
     const isOwner = message.senderId === userId;
     if (!isAdmin && !isOwner) {
-      return res.status(403).json({ message: "Only the sender or admin can update this message" });
+      return res
+        .status(403)
+        .json({ message: "Only the sender or admin can update this message" });
     }
 
     const updated = await prisma.message.update({
@@ -162,7 +164,9 @@ export const deleteMessage = async (req, res) => {
 
     const isOwner = message.senderId === userId;
     if (!isAdmin && !isOwner) {
-      return res.status(403).json({ message: "Only the sender or admin can delete this message" });
+      return res
+        .status(403)
+        .json({ message: "Only the sender or admin can delete this message" });
     }
 
     await prisma.message.delete({ where: { id } });

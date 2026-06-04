@@ -1,7 +1,6 @@
 import prisma from "../prisma/db.js";
 import userRepository from "../repositories/user.js";
 
-
 export const createUser = async (req, res) => {
   try {
     const { username, name, email, password, role, gender } = req.body;
@@ -69,28 +68,20 @@ export const updateUser = async (req, res) => {
     return res.status(500).json({ message: err.message });
   }
 };
-export const deleteUser = async (req,res) => {
-    try {
-        const {id} = req.params;
-        const user =  await userRepository.findById(id);
-        if (!user) {
-            return res.status(404).json({
-                message: `No user with the id: ${id} found`
-            })
-        }
-        await userRepository.delete(id);
-        return res.status(200).json({
-            message: `User with id: ${id} successsfully deleted`,
-        });
-    } catch (err) {
+export const deleteUser = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const user = await userRepository.findById(id);
+    if (!user) {
+      return res.status(404).json({
+        message: `No user with the id: ${id} found`,
+      });
+    }
+    await userRepository.delete(id);
+    return res.status(200).json({
+      message: `User with id: ${id} successsfully deleted`,
+    });
+  } catch (err) {
     return res.status(500).json({ message: err.message });
   }
-}
-
-// export default {
-//   createUser,
-//   getUsers,
-//   getUser,
-//   updateUser,
-//   deleteUser
-// };
+};
