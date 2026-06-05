@@ -16,7 +16,8 @@
     "env:copy": "cp .env.example .env || copy .env.example .env",
     "prisma:migrate": "npx prisma migrate dev",
     "prisma:reset": "npx prisma migrate reset --force",
-    "prisma:seed:user": "node ./prisma/seeding/user.js"
+    "prisma:seed:user": "node ./prisma/seeding/user.js",
+    "prisma:seed:all": "node ./prisma/seeding/all.js"
   },
   "keywords": [],
   "author": "",
