@@ -1,27 +1,17 @@
-import prisma from "../prisma/db.js";
+import repos from "../repositories/index.js";
 
 export const createMessage = async (req, res) => {
   try {
     const { conversationId, content } = req.body;
     const senderId = req.user.id;
 
-    const conversation = await prisma.conversation.findUnique({
-      where: { id: conversationId },
-    });
-    if (!conversation) {
-      return res.status(404).json({ message: "Conversation not found" });
-    }
+    const conversation = await repos.Conversation.findById(conversationId);
+    if (!conversation) return res.status(404).json({ message: "Conversation not found" });
 
-    const message = await prisma.message.create({
-      data: {
-        conversationId,
-        senderId,
-        content,
-      },
-      include: {
-        sender: true,
-        conversation: true,
-      },
+    const message = await repos.Message.create({
+      conversationId,
+      senderId,
+      content,
     });
 
     return res.status(201).json({ data: message });
@@ -37,29 +27,16 @@ export const getMessages = async (req, res) => {
     const { conversationId } = req.query;
 
     const where = conversationId ? { conversationId } : {};
+    const messages = await repos.Message.findAll(where);
+    
+    if (!isAdmin && conversationId) {
+      const conv = await repos.Conversation.findById(conversationId);
+      const isParticipant = (conv.participants || []).some(p => p.userId === userId);
+      if (!isParticipant) return res.status(403).json({ message: "Forbidden" });
+      return res.status(200).json({ data: messages });
+    }
 
-    const messages = await prisma.message.findMany({
-      where,
-      include: {
-        sender: true,
-        conversation: {
-          include: {
-            participants: true,
-          },
-        },
-      },
-      orderBy: { timestamp: "asc" },
-    });
-
-    const filtered = isAdmin
-      ? messages
-      : messages.filter((message) =>
-          message.conversation.participants.some(
-            (participant) => participant.userId === userId
-          )
-        );
-
-    return res.status(200).json({ data: filtered });
+    return res.status(200).json({ data: messages });
   } catch (err) {
     return res.status(500).json({ message: err.message });
   }
@@ -71,29 +48,12 @@ export const getMessage = async (req, res) => {
     const userId = req.user.id;
     const isAdmin = req.user.role === "ADMIN";
 
-    const message = await prisma.message.findUnique({
-      where: { id },
-      include: {
-        sender: true,
-        conversation: {
-          include: {
-            participants: true,
-          },
-        },
-      },
-    });
+    const message = await repos.Message.findById(id);
+    if (!message) return res.status(404).json({ message: "Message not found" });
 
-    if (!message) {
-      return res.status(404).json({ message: "Message not found" });
-    }
-
-    const isParticipant = message.conversation.participants.some(
-      (participant) => participant.userId === userId
-    );
-
-    if (!isAdmin && !isParticipant) {
-      return res.status(403).json({ message: "Forbidden" });
-    }
+    const conv = await repos.Conversation.findById(message.conversationId);
+    const isParticipant = (conv.participants || []).some(p => p.userId === userId);
+    if (!isAdmin && !isParticipant) return res.status(403).json({ message: "Forbidden" });
 
     return res.status(200).json({ data: message });
   } catch (err) {
@@ -108,40 +68,15 @@ export const updateMessage = async (req, res) => {
     const isAdmin = req.user.role === "ADMIN";
     const { content, isRead, isEdited, messageStatus } = req.body;
 
-    const message = await prisma.message.findUnique({
-      where: { id },
-      include: {
-        conversation: {
-          include: { participants: true },
-        },
-      },
-    });
-
-    if (!message) {
-      return res.status(404).json({ message: "Message not found" });
-    }
+    const message = await repos.Message.findById(id);
+    if (!message) return res.status(404).json({ message: "Message not found" });
 
     const isOwner = message.senderId === userId;
     if (!isAdmin && !isOwner) {
-      return res
-        .status(403)
-        .json({ message: "Only the sender or admin can update this message" });
+      return res.status(403).json({ message: "Only the sender or admin can update this message" });
     }
 
-    const updated = await prisma.message.update({
-      where: { id },
-      data: {
-        content,
-        isRead,
-        isEdited,
-        messageStatus,
-      },
-      include: {
-        sender: true,
-        conversation: true,
-      },
-    });
-
+    const updated = await repos.Message.update(id, { content, isRead, isEdited, messageStatus });
     return res.status(200).json({ data: updated });
   } catch (err) {
     return res.status(500).json({ message: err.message });
@@ -154,22 +89,15 @@ export const deleteMessage = async (req, res) => {
     const userId = req.user.id;
     const isAdmin = req.user.role === "ADMIN";
 
-    const message = await prisma.message.findUnique({
-      where: { id },
-    });
-
-    if (!message) {
-      return res.status(404).json({ message: "Message not found" });
-    }
+    const message = await repos.Message.findById(id);
+    if (!message) return res.status(404).json({ message: "Message not found" });
 
     const isOwner = message.senderId === userId;
     if (!isAdmin && !isOwner) {
-      return res
-        .status(403)
-        .json({ message: "Only the sender or admin can delete this message" });
+      return res.status(403).json({ message: "Only the sender or admin can delete this message" });
     }
 
-    await prisma.message.delete({ where: { id } });
+    await repos.Message.delete(id);
     return res.status(200).json({ message: `Message ${id} deleted` });
   } catch (err) {
     return res.status(500).json({ message: err.message });

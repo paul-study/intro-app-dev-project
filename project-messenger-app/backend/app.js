@@ -10,6 +10,9 @@ import healthRoutes from "./routes/health.js";
 
 import conversationRoutes from "./routes/conversations.js";
 import messageRoutes from "./routes/messages.js";
+import conversationParticipantRoutes from "./routes/conversationParticipants.js";
+import friendshipRoutes from "./routes/friendships.js";
+import userSettingsRoutes from "./routes/userSettings.js";
 
 const app = express();
 
@@ -27,6 +30,9 @@ app.use("/api/users", userRoutes)
 app.use("/health", healthRoutes);
 app.use("/api/conversations", conversationRoutes);
 app.use("/api/messages", messageRoutes);
+app.use("/api/conversation-participants", conversationParticipantRoutes);
+app.use("/api/friendships", friendshipRoutes);
+app.use("/api/user-settings", userSettingsRoutes);
 
 app.listen(PORT, () => {
   console.log(

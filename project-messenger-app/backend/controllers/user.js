@@ -1,12 +1,17 @@
-import prisma from "../prisma/db.js";
-import userRepository from "../repositories/user.js";
+import repos from "../repositories/index.js";
 
 export const createUser = async (req, res) => {
   try {
     const { username, name, email, password, role, gender } = req.body;
 
-    const user = await prisma.user.create({
-      data: { username, name, email, password, role, gender },
+    // create via repository
+    const user = await repos.User.create({
+      username,
+      name,
+      email,
+      password,
+      role,
+      gender,
     });
 
     return res.status(201).json({
@@ -17,10 +22,11 @@ export const createUser = async (req, res) => {
     return res.status(500).json({ message: err.message });
   }
 };
+
 export const getUsers = async (req, res) => {
   try {
-    const users = await userRepository.findAll();
-    if (users.length === 0) {
+    const users = await repos.User.findAll();
+    if (!users || users.length === 0) {
       return res.status(404).json({ message: "No users found" });
     }
     return res.status(200).json({ data: users });
@@ -28,10 +34,11 @@ export const getUsers = async (req, res) => {
     return res.status(500).json({ message: err.message });
   }
 };
+
 export const getUser = async (req, res) => {
   try {
     const { id } = req.params;
-    const user = await userRepository.findById(id);
+    const user = await repos.User.findById(id);
     if (!user) {
       return res.status(404).json({
         message: `No user with the id: ${id} found`,
@@ -42,17 +49,19 @@ export const getUser = async (req, res) => {
     return res.status(500).json({ message: err.message });
   }
 };
+
 export const updateUser = async (req, res) => {
   try {
     const { id } = req.params;
     const { username, name, email, password, role, gender } = req.body;
-    let user = await userRepository.findById(id);
+    const user = await repos.User.findById(id);
     if (!user) {
       return res.status(404).json({
         message: `No user with the id: ${id} found`,
       });
     }
-    user = await userRepository.update(id, {
+
+    const updated = await repos.User.update(id, {
       username,
       name,
       email,
@@ -61,25 +70,26 @@ export const updateUser = async (req, res) => {
       gender,
     });
     return res.status(200).json({
-      message: `User with id: ${id} successsfully updated`,
-      data: user,
+      message: `User with id: ${id} successfully updated`,
+      data: updated,
     });
   } catch (err) {
     return res.status(500).json({ message: err.message });
   }
 };
+
 export const deleteUser = async (req, res) => {
   try {
     const { id } = req.params;
-    const user = await userRepository.findById(id);
+    const user = await repos.User.findById(id);
     if (!user) {
       return res.status(404).json({
         message: `No user with the id: ${id} found`,
       });
     }
-    await userRepository.delete(id);
+    await repos.User.delete(id);
     return res.status(200).json({
-      message: `User with id: ${id} successsfully deleted`,
+      message: `User with id: ${id} successfully deleted`,
     });
   } catch (err) {
     return res.status(500).json({ message: err.message });

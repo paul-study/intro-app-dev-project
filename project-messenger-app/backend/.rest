@@ -82,7 +82,7 @@
 
 # POST http://localhost:3000/api/auth/logout
 # Content-Type: application/json
-# Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjNkN2VlZWZmLTg3YWMtNGM1MC04NjliLTEzNjc5N2Y5MDNjYiIsInVzZXJuYW1lIjoidG9tIiwicm9sZSI6IlVTRVIiLCJpYXQiOjE3ODA1MzgzMjgsImV4cCI6MTc4MDU0MTkyOH0.nPKCPURHnATUZLf78A3OtPwRFLrHTQVV3OqJv3SLVBE
+# Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6ImIxZGQ4NGNiLWRlOGQtNDUxMi1iMTU4LWFlNzE1MjgyNDYzMyIsInVzZXJuYW1lIjoidG9tIiwicm9sZSI6IlVTRVIiLCJpYXQiOjE3ODA2NTU4NTksImV4cCI6MTc4MDY1OTQ1OX0.ScqhDVdxb8sKpMXXJJtfmtdblPFaokWRR4LhJhojN1A
 
 # http://localhost:3000/health
 
@@ -103,12 +103,12 @@
 
 
 
-PUT http://localhost:3000/api/users/3d7eeeff-87ac-4c50-869b-136797f903cb
-Content-Type: application/json
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjNkN2VlZWZmLTg3YWMtNGM1MC04NjliLTEzNjc5N2Y5MDNjYiIsInVzZXJuYW1lIjoidG9tIiwicm9sZSI6IlVTRVIiLCJpYXQiOjE3ODA1NDAyNTQsImV4cCI6MTc4MDU0Mzg1NH0.iiZzo4-eGJ4x_9FaW2s6owwM_sl4hUsqOGKd5vX0M74
+# PUT http://localhost:3000/api/users/3d7eeeff-87ac-4c50-869b-136797f903cb
+# Content-Type: application/json
+# Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjNkN2VlZWZmLTg3YWMtNGM1MC04NjliLTEzNjc5N2Y5MDNjYiIsInVzZXJuYW1lIjoidG9tIiwicm9sZSI6IlVTRVIiLCJpYXQiOjE3ODA1NDAyNTQsImV4cCI6MTc4MDU0Mzg1NH0.iiZzo4-eGJ4x_9FaW2s6owwM_sl4hUsqOGKd5vX0M74
 
-{
-  "username": "tommo"
-}
+# {
+#   "username": "tommo"
+# }
 
 
