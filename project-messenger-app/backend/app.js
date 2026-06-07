@@ -39,5 +39,8 @@ app.listen(PORT, () => {
     `Server is listening on port ${PORT}. Visit ${API_BASE_URL}:${PORT}`
   );
 });
+app.use((req, res) => {
+  res.status(404).json({ message: "Route not found" });
+});
 
 export default app;

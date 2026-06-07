@@ -1,10 +1,10 @@
 import repos from "../repositories/index.js";
+import { clearCacheStore } from "../middleware/cache.js";
 
 export const createUser = async (req, res) => {
   try {
     const { username, name, email, password, role, gender } = req.body;
 
-    // create via repository
     const user = await repos.User.create({
       username,
       name,
@@ -13,6 +13,7 @@ export const createUser = async (req, res) => {
       role,
       gender,
     });
+    clearCacheStore();
 
     return res.status(201).json({
       message: "User successfully created",
@@ -69,6 +70,7 @@ export const updateUser = async (req, res) => {
       role,
       gender,
     });
+    clearCacheStore();
     return res.status(200).json({
       message: `User with id: ${id} successfully updated`,
       data: updated,
@@ -88,6 +90,7 @@ export const deleteUser = async (req, res) => {
       });
     }
     await repos.User.delete(id);
+    clearCacheStore();
     return res.status(200).json({
       message: `User with id: ${id} successfully deleted`,
     });
