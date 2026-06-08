@@ -1,4 +1,6 @@
 import sinon from "sinon";
+import quizRepository from "../../repositories/quiz.js";
+import questionRepository from "../../repositories/question.js";
 
 export const mockReq = (body = {}, params = {}, query = {}) => ({
   body,

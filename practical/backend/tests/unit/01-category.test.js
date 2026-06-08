@@ -1,4 +1,3 @@
-// Write your import code here
 import sinon from "sinon";
 import { expect } from "chai";
 import {
@@ -8,8 +7,7 @@ import {
   deleteCategory,
 } from "../../controllers/category.js";
 import categoryRepository from "../../repositories/category.js";
-import { mockReq, mockRes } from "../mocks/category.mock.js";
-
+import { mockReq, mockRes, stubCategoryRepo } from "../mocks/category.mock.js";
 
 describe("Category Controller", () => {
   afterEach(() => sinon.restore());
@@ -34,12 +32,11 @@ describe("Category Controller", () => {
 
       await createCategories(req, res);
 
-      expect(res.status.calledOnceWith(201)).to.be.true;
+      expect(res.status.calledOnceWithExactly(201)).to.be.true;
       expect(res.json.calledOnce).to.be.true;
       expect(res.json.firstCall.args[0]).to.deep.equal({
         message: "Categories successfully created",
         data: expectedCategories,
-
       });
     });
   });
@@ -53,12 +50,15 @@ describe("Category Controller", () => {
       const req = mockReq();
       const res = mockRes();
 
-      const categories = [{ id: 1, name: "General Knowledge" }];
+      const categories = [
+        { id: 1, name: "General Knowledge" },
+        { id: 2, name: "Science" },
+      ];
       sinon.stub(categoryRepository, "findAll").resolves(categories);
 
       await getCategories(req, res);
 
-      expect(res.status.calledOnceWith(200)).to.be.true;
+      expect(res.status.calledOnceWithExactly(200)).to.be.true;
       expect(res.json.calledOnce).to.be.true;
       expect(res.json.firstCall.args[0]).to.deep.equal({
         data: categories,
@@ -74,7 +74,7 @@ describe("Category Controller", () => {
 
       await getCategories(req, res);
 
-      expect(res.status.calledOnceWith(404)).to.be.true;
+      expect(res.status.calledOnceWithExactly(404)).to.be.true;
       expect(res.json.calledOnce).to.be.true;
       expect(res.json.firstCall.args[0]).to.deep.equal({
         message: "No categories found",
@@ -96,7 +96,7 @@ describe("Category Controller", () => {
 
       await getCategory(req, res);
 
-      expect(res.status.calledOnceWith(200)).to.be.true;
+      expect(res.status.calledOnceWithExactly(200)).to.be.true;
       expect(res.json.calledOnce).to.be.true;
       expect(res.json.firstCall.args[0]).to.deep.equal({
         data: category,
@@ -112,7 +112,7 @@ describe("Category Controller", () => {
 
       await getCategory(req, res);
 
-      expect(res.status.calledOnceWith(404)).to.be.true;
+      expect(res.status.calledOnceWithExactly(404)).to.be.true;
       expect(res.json.calledOnce).to.be.true;
       expect(res.json.firstCall.args[0]).to.deep.equal({
         message: "No category with the id: 999 found",
@@ -135,7 +135,7 @@ describe("Category Controller", () => {
 
       await deleteCategory(req, res);
 
-      expect(res.status.calledOnceWith(200)).to.be.true;
+      expect(res.status.calledOnceWithExactly(200)).to.be.true;
       expect(res.json.calledOnce).to.be.true;
       expect(res.json.firstCall.args[0]).to.deep.equal({
         message: "Category with the id: 1 successfully deleted",
@@ -151,7 +151,7 @@ describe("Category Controller", () => {
 
       await deleteCategory(req, res);
 
-      expect(res.status.calledOnceWith(404)).to.be.true;
+      expect(res.status.calledOnceWithExactly(404)).to.be.true;
       expect(res.json.calledOnce).to.be.true;
       expect(res.json.firstCall.args[0]).to.deep.equal({
         message: "No category with the id: 999 found",
