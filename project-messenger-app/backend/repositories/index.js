@@ -2,7 +2,13 @@ import prisma from "../prisma/db.js";
 
 const User = {
   create: (data) => prisma.user.create({ data }),
-  findAll: (filter = {}) => prisma.user.findMany({ where: filter }),
+  findAll: ({ where = {}, take, skip, orderBy } = {}) =>
+  prisma.user.findMany({
+    where,
+    ...(take !== undefined ? { take } : {}),
+    ...(skip !== undefined ? { skip } : {}),
+    ...(orderBy ? { orderBy } : {}),
+  }),
   findById: (id) => prisma.user.findUnique({ where: { id } }),
   findByEmail: (email) => prisma.user.findUnique({ where: { email } }),
   findByUsername: (username) => prisma.user.findUnique({ where: { username } }),

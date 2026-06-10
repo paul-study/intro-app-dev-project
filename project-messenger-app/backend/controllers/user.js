@@ -26,7 +26,26 @@ export const createUser = async (req, res) => {
 
 export const getUsers = async (req, res) => {
   try {
-    const users = await repos.User.findAll();
+    const {
+      page = 1,
+      limit = 10,
+      sort = "createdAt",
+      order = "asc",
+      role,
+      gender,
+    } = req.query;
+
+    const where = {};
+    if (role) where.role = role;
+    if (gender) where.gender = gender;
+
+    const users = await repos.User.findAll({
+      where,
+      skip: (Number(page) - 1) * Number(limit),
+      take: Number(limit),
+      orderBy: { [sort]: order },
+    });
+
     if (!users || users.length === 0) {
       return res.status(404).json({ message: "No users found" });
     }
