@@ -2,6 +2,7 @@
   import { goto } from '$app/navigation';
   import { apiCall } from '$lib/api';
   
+  
   let email = '';
   let password = '';
   let error = '';
@@ -41,7 +42,7 @@
   <form on:submit|preventDefault={handleLogin}>
     <input 
   type="email" 
-  placeholder="Email" 
+  placeholder="Enter Email" 
   bind:value={email}
   required
 />
