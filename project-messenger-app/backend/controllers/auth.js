@@ -33,12 +33,18 @@ export const register = async (req, res) => {
 
 export const login = async (req, res) => {
   try {
-    const { email, password } = req.body;
-    const user = await repos.User.findByEmail(email);
-    if (!user) return res.status(401).json({ message: "Invalid credentials" });
+    const {username, email, password } = req.body;
+    let user
+    if (username === null) {
+      user = await repos.User.findByEmail(email);
+    } else {
+      user = await repos.User.findByUsername(username);
+    }
+
+    if (!user) return res.status(401).json({ message: "Invalid credentials Email" });
 
     const ok = await bcrypt.compare(password, user.password);
-    if (!ok) return res.status(401).json({ message: "Invalid credentials" });
+    if (!ok) return res.status(401).json({ message: "Invalid credentials Password" });
 
     const token = jwt.sign({ id: user.id, username: user.username, role: user.role }, JWT_SECRET, { expiresIn: JWT_EXPIRES_IN });
     const { password: _p, ...safe } = user;
