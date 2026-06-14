@@ -1,13 +1,13 @@
 import bcryptjs from "bcryptjs";
 import jwt from "jsonwebtoken";
 
-import prisma from "../prisma/db.js";
+import authRepository from "../repositories/auth.js";
 
 const register = async (req, res) => {
   try {
     const { username, password, role } = req.body;
 
-    const existingUser = await prisma.user.findUnique({ where: { username } });
+    const existingUser = await authRepository.findByUsername(username);
 
     if (existingUser) {
       return res.status(409).json({ message: "User already exists" });
@@ -17,17 +17,10 @@ const register = async (req, res) => {
 
     const hashedPassword = await bcryptjs.hash(password, salt);
 
-    const createdUser = await prisma.user.create({
-      data: {
-        username,
-        password: hashedPassword,
-        role,
-      },
-      select: {
-        id: true,
-        username: true,
-        role: true,
-      },
+    const createdUser = await authRepository.create({
+      username,
+      password: hashedPassword,
+      role,
     });
 
     return res.status(201).json({
@@ -45,7 +38,7 @@ const login = async (req, res) => {
   try {
     const { username, password } = req.body;
 
-    const user = await prisma.user.findUnique({ where: { username } });
+    const user = await authRepository.findByUsername(username);
     if (!user) {
       return res.status(401).json({ message: "Invalid username" });
     }
