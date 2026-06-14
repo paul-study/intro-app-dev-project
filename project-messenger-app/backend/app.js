@@ -34,11 +34,11 @@ app.use("/api/conversation-participants", conversationParticipantRoutes);
 app.use("/api/friendships", friendshipRoutes);
 app.use("/api/user-settings", userSettingsRoutes);
 
-app.listen(PORT, () => {
-  console.log(
-    `Server is listening on port ${PORT}. Visit ${API_BASE_URL}:${PORT}`
-  );
-});
+if (process.env.NODE_ENV !== "test") {
+  app.listen(PORT, () => {
+    console.log(`Server is listening on port ${PORT}. Visit ${API_BASE_URL}:${PORT}`);
+  });
+}
 app.use((req, res) => {
   res.status(404).json({ message: "Route not found" });
 });
