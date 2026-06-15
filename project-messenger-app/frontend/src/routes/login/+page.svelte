@@ -1,4 +1,5 @@
 <script>
+// @ts-nocheck
 	import { goto } from '$app/navigation';
 	import { apiCall } from '$lib/api';
 
@@ -7,7 +8,8 @@
 	let error = '';
 	let loading = false;
 
-	async function handleLogin() {
+	async function handleLogin(e) {
+		e.preventDefault();
 		loading = true;
 		error = '';
 
@@ -29,6 +31,10 @@
 			loading = false;
 		}
 	}
+
+	async function handleGoto() {
+		await goto('/register')
+	}
 </script>
 
 <div class="login-container">
@@ -38,13 +44,15 @@
 		<p class="error">{error}</p>
 	{/if}
 
-	<form on:submit|preventDefault={handleLogin}>
+	<form onsubmit={handleLogin}>
 		<input type="text" placeholder="Enter Email or Username" bind:value={identifier} required />
 		<input type="password" placeholder="Password" bind:value={password} required />
 		<button type="submit" disabled={loading}>
 			{loading ? 'Logging in...' : 'Login'}
 		</button>
 	</form>
+
+	<button type="button" onclick={handleGoto}>Register</button>
 </div>
 
 <style>

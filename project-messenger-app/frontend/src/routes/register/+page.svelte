@@ -34,6 +34,10 @@
       loading = false;
     }
   }
+
+  async function handleGoto() {
+    await goto('/login')
+  }
 </script>
 
 <div class="register-container">
@@ -58,6 +62,7 @@
       {loading ? 'Registering...' : 'Register'}
     </button>
   </form>
+  <button type="button" onclick={handleGoto}>Login</button>
 </div>
 
 <style>
