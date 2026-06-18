@@ -1,15 +1,25 @@
 <script>
-	let { text, type, onclick, value } = $props();
+  // @ts-nocheck
+  let {
+    type = 'button',
+    disabled = false,
+    onclick = null,
+    children,
+  } = $props();
 </script>
 
-<button {type} {onclick} class="btn" {value}>{text}</button>
+<button {type} {disabled} {onclick}>
+  {@render children()}
+</button>
 
 <style>
-	.btn {
-		padding: 10px;
-	}
+  button {
+    padding: 10px;
+    cursor: pointer;
+  }
 
-	.btn:hover {
-		background-color: #0056b3;
-	}
+  button:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
 </style>

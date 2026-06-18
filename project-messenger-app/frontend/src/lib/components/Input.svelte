@@ -1,6 +1,31 @@
 <script>
-    let {type, placeholder, value, ...restProps} = $props();
+  // @ts-nocheck
+  let {
+    type = 'text',
+    placeholder = '',
+    value = $bindable(''),
+    required = false,
+    disabled = false,
+    options = null,
+  } = $props();
 </script>
 
-<input type={type} placeholder={placeholder} value={value} {...restProps} />
+{#if type === 'select'}
+  <select bind:value {required} {disabled}>
+    <option value="" disabled selected>{placeholder || 'Select an option'}</option>
+    {#each options as opt}
+      <option value={opt.value}>{opt.label}</option>
+    {/each}
+  </select>
+{:else}
+  <input {type} {placeholder} bind:value {required} {disabled} />
+{/if}
 
+<style>
+  input,
+  select {
+    padding: 10px;
+    width: 100%;
+    box-sizing: border-box;
+  }
+</style>

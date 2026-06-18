@@ -1,8 +1,9 @@
 <script>
-// @ts-nocheck
+	// @ts-nocheck
 	import { goto } from '$app/navigation';
 	import { apiCall } from '$lib/api';
 	import Input from '$lib/components/Input.svelte';
+	import Button from '$lib/components/Button.svelte';
 
 	let identifier = '';
 	let password = '';
@@ -34,7 +35,7 @@
 	}
 
 	async function handleGoto() {
-		await goto('/register')
+		await goto('/register');
 	}
 </script>
 
@@ -42,19 +43,18 @@
 	<h1>Login</h1>
 
 	{#if error}
-	<p class="error">{error}</p>
+		<p class="error">{error}</p>
 	{/if}
-	
-	<Input type="text" placeholder="Enter Email or Username" bind:value={identifier} required />
+
 	<form onsubmit={handleLogin}>
-		<input type="text" placeholder="Enter Email or Username" bind:value={identifier} required />
-		<input type="password" placeholder="Password" bind:value={password} required />
-		<button type="submit" disabled={loading}>
+		<Input type="text" placeholder="Enter Email or Username" bind:value={identifier} required />
+		<Input type="password" placeholder="Password" bind:value={password} required />
+		<Button type="submit" disabled={loading}>
 			{loading ? 'Logging in...' : 'Login'}
-		</button>
+		</Button>
 	</form>
 
-	<button type="button" onclick={handleGoto}>Register</button>
+	<Button type="button" onclick={handleGoto}>Register</Button>
 </div>
 
 <style>

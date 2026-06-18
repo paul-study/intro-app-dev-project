@@ -1,87 +1,95 @@
 <script>
-// @ts-nocheck
-  import { goto } from '$app/navigation';
-  import { apiCall } from '$lib/api';
+	// @ts-nocheck
+	import { goto } from '$app/navigation';
+	import { apiCall } from '$lib/api';
+  import Input from '$lib/components/Input.svelte';
 
-  let username = '';
-  let name = '';
-  let email = '';
-  let password = '';
-  let gender = '';
-  let error = '';
-  let loading = false;
+	let username = '';
+	let name = '';
+	let email = '';
+	let password = '';
+	let gender = '';
+	let error = '';
+	let loading = false;
 
-  async function handleRegister(event) {
-    event.preventDefault();
-    loading = true;
-    error = '';
+	async function handleRegister(event) {
+		event.preventDefault();
+		loading = true;
+		error = '';
 
-    try {
-      const data = await apiCall('/api/auth/register', {
-        method: 'POST',
-        body: JSON.stringify({ username, name, email, password, gender, role: 'USER' })
-      });
+		try {
+			const data = await apiCall('/api/auth/register', {
+				method: 'POST',
+				body: JSON.stringify({ username, name, email, password, gender, role: 'USER' })
+			});
 
-      localStorage.setItem('token', data.token);
-      await goto('/conversations');
-    } catch (err) {
-      if (err instanceof Error) {
-        error = err.message;
-      } else {
-        error = 'Registration failed';
-      }
-    } finally {
-      loading = false;
-    }
-  }
+			localStorage.setItem('token', data.token);
+			await goto('/conversations');
+		} catch (err) {
+			if (err instanceof Error) {
+				error = err.message;
+			} else {
+				error = 'Registration failed';
+			}
+		} finally {
+			loading = false;
+		}
+	}
 
-  async function handleGoto() {
-    await goto('/login')
-  }
+	async function handleGoto() {
+		await goto('/login');
+	}
 </script>
 
 <div class="register-container">
-  <h1>Register</h1>
+	<h1>Register</h1>
 
-  {#if error}
-    <p class="error">{error}</p>
-  {/if}
+	{#if error}
+		<p class="error">{error}</p>
+	{/if}
 
-  <form onsubmit={handleRegister}>
-    <input type="text" placeholder="Username" bind:value={username} required />
-    <input type="text" placeholder="Full Name" bind:value={name} required />
-    <input type="email" placeholder="Email" bind:value={email} required />
-    <input type="password" placeholder="Password" bind:value={password} required />
-    <select bind:value={gender} required>
-      <option value="" disabled selected>Select Gender</option>
-      <option value="MALE">Male</option>
-      <option value="FEMALE">Female</option>
-      <option value="UNKNOWN">Prefer not to say</option>
-    </select>
-    <button type="submit" disabled={loading}>
-      {loading ? 'Registering...' : 'Register'}
-    </button>
-  </form>
-  <button type="button" onclick={handleGoto}>Login</button>
+	<form onsubmit={handleRegister}>
+		<Input type="text" placeholder="Username" bind:value={username} required />
+		<Input type="text" placeholder="Full Name" bind:value={name} required />
+		<Input type="email" placeholder="Email" bind:value={email} required />
+		<Input type="password" placeholder="Password" bind:value={password} required />
+		<Input
+			type="select"
+			placeholder="Select Gender"
+			bind:value={gender}
+			required
+			options={[
+				{ value: 'MALE', label: 'Male' },
+				{ value: 'FEMALE', label: 'Female' },
+				{ value: 'UNKNOWN', label: 'Prefer not to say' }
+			]}
+		/>
+		<button type="submit" disabled={loading}>
+			{loading ? 'Registering...' : 'Register'}
+		</button>
+	</form>
+	<button type="button" onclick={handleGoto}>Login</button>
 </div>
 
 <style>
-  .register-container {
-    max-width: 400px;
-    margin: 50px auto;
-  }
+	.register-container {
+		max-width: 400px;
+		margin: 50px auto;
+	}
 
-  form {
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-  }
+	form {
+		display: flex;
+		flex-direction: column;
+		gap: 10px;
+	}
 
-  input, select, button {
-    padding: 10px;
-  }
+	input,
+	select,
+	button {
+		padding: 10px;
+	}
 
-  .error {
-    color: red;
-  }
+	.error {
+		color: red;
+	}
 </style>
