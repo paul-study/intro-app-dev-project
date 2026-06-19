@@ -46,7 +46,7 @@ export const login = async (req, res) => {
     }
 
     if (!user)
-      return res.status(401).json({ message: "Invalid credentials Email" });
+      return res.status(401).json({ message: "Invalid credentials Email or Username" });
 
     const ok = await bcrypt.compare(password, user.password);
     if (!ok)

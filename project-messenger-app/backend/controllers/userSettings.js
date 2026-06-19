@@ -22,6 +22,16 @@ export const createUserSettings = async (req, res) => {
   }
 };
 
+export const getMyUserSettings = async (req, res) => {
+  try {
+    const settings = await repos.UserSettings.findByUserId(req.user.id);
+    if (!settings) return res.status(404).json({ message: "Not found" });
+    return res.status(200).json({ data: settings });
+  } catch (err) {
+    return res.status(500).json({ message: err.message });
+  }
+};
+
 export const getUserSettingsList = async (req, res) => {
   try {
     if (req.user.role !== "ADMIN") return res.status(403).json({ message: "Forbidden" });

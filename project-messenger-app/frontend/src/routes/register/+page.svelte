@@ -4,13 +4,13 @@
 	import { apiCall } from '$lib/api';
   import Input from '$lib/components/Input.svelte';
 
-	let username = '';
-	let name = '';
-	let email = '';
-	let password = '';
-	let gender = '';
-	let error = '';
-	let loading = false;
+	let username = $state('');
+	let name = $state('');
+	let email = $state('');
+	let password = $state('');
+	let gender = $state('');
+	let error = $state('');
+	let loading = $state(false);
 
 	async function handleRegister(event) {
 		event.preventDefault();

@@ -5,13 +5,13 @@
 	import Input from '$lib/components/Input.svelte';
 	import Button from '$lib/components/Button.svelte';
 
-	let identifier = '';
-	let password = '';
-	let error = '';
-	let loading = false;
+	let identifier = $state('');
+	let password = $state('');
+	let error = $state('');
+	let loading = $state(false);
 
 	async function handleLogin(e) {
-		e.preventDefault();
+		e.preventDefault();		
 		loading = true;
 		error = '';
 

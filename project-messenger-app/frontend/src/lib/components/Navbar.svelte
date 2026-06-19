@@ -12,8 +12,8 @@
 
 <nav>
   <div class="nav-links">
-    <a href="/">Home</a>
     <a href="/conversations">Conversations</a>
+    <a href="/friendships">Friends</a>
     <a href="/usersettings">Settings</a>
   </div>
   <div class="nav-user">

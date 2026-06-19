@@ -10,9 +10,15 @@ export async function apiCall(endpoint, options = {}) {
     ...options
   });
   
+  const data = await response.json();
+
   if (!response.ok) {
-    throw new Error(`API error: ${response.statusText}`);
+    if (data.errors) {
+      const messages = data.errors.map((e) => e.message).join(', ');
+      throw new Error(messages);
+    }
+    throw new Error(data.message || response.statusText);
   }
-  
-  return response.json();
+
+  return data;
 }
