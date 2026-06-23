@@ -1,28 +1,34 @@
-<script>
+﻿<script>
   // @ts-nocheck
   import { onMount } from 'svelte';
   import { apiCall } from '$lib/api';
   import { currentUser } from '$lib/auth';
   import Button from '$lib/components/Button.svelte';
-  import Input from '$lib/components/Input.svelte';
+  import Alert from '$lib/components/Alert.svelte';
+  import Loading from '$lib/components/Loading.svelte';
+  import Card from '$lib/components/Card.svelte';
+  import Modal from '$lib/components/Modal.svelte';
 
   let friendships = $state([]);
+  let users = $state([]);
   let loading = $state(true);
   let error = $state('');
+  let success = $state('');
 
-  let newUserId2 = $state('');
-  let sending = $state(false);
-  let sendError = $state('');
+  let sending = $state(''); // holds userId being sent to
+  let deleteTargetId = $state(null);
 
-  async function loadFriendships() {
+  async function loadData() {
     loading = true;
     error = '';
     try {
       const token = localStorage.getItem('token');
-      const data = await apiCall('/api/friendships', {
-        headers: { Authorization: `Bearer ${token}` }
-      });
-      friendships = data.data;
+      const [friendRes, userRes] = await Promise.all([
+        apiCall('/api/friendships', { headers: { Authorization: `Bearer ${token}` } }),
+        apiCall('/api/users?limit=100', { headers: { Authorization: `Bearer ${token}` } })
+      ]);
+      friendships = friendRes.data;
+      users = userRes.data.filter((u) => u.id !== $currentUser?.id);
     } catch (err) {
       error = err.message;
     } finally {
@@ -30,23 +36,23 @@
     }
   }
 
-  async function handleSendRequest(e) {
-    e.preventDefault();
-    sending = true;
-    sendError = '';
+  async function handleSendRequest(userId) {
+    sending = userId;
+    success = '';
+    error = '';
     try {
       const token = localStorage.getItem('token');
       await apiCall('/api/friendships', {
         method: 'POST',
         headers: { Authorization: `Bearer ${token}` },
-        body: JSON.stringify({ userId2: newUserId2 })
+        body: JSON.stringify({ userId2: userId })
       });
-      newUserId2 = '';
-      await loadFriendships();
+      success = 'Friend request sent.';
+      await loadData();
     } catch (err) {
-      sendError = err.message;
+      error = err.message;
     } finally {
-      sending = false;
+      sending = '';
     }
   }
 
@@ -58,7 +64,8 @@
         headers: { Authorization: `Bearer ${token}` },
         body: JSON.stringify({ status: 'ACCEPTED' })
       });
-      await loadFriendships();
+      success = 'Friend request accepted.';
+      await loadData();
     } catch (err) {
       error = err.message;
     }
@@ -72,86 +79,110 @@
         headers: { Authorization: `Bearer ${token}` },
         body: JSON.stringify({ status: 'BLOCKED' })
       });
-      await loadFriendships();
+      success = 'User blocked.';
+      await loadData();
     } catch (err) {
       error = err.message;
     }
   }
 
-  async function handleDelete(id) {
+  async function handleDelete() {
+    if (!deleteTargetId) return;
     try {
       const token = localStorage.getItem('token');
-      await apiCall(`/api/friendships/${id}`, {
+      await apiCall(`/api/friendships/${deleteTargetId}`, {
         method: 'DELETE',
         headers: { Authorization: `Bearer ${token}` }
       });
-      await loadFriendships();
+      deleteTargetId = null;
+      success = 'Friend removed.';
+      await loadData();
     } catch (err) {
       error = err.message;
+      deleteTargetId = null;
     }
   }
 
-  function getOtherUserId(f) {
-    return f.userId1 === $currentUser?.id ? f.userId2 : f.userId1;
+  function getFriendship(userId) {
+    return friendships.find(
+      (f) => f.userId1 === userId || f.userId2 === userId
+    );
   }
 
   function isIncoming(f) {
     return f.userId2 === $currentUser?.id && f.status === 'PENDING';
   }
 
-  onMount(loadFriendships);
+  onMount(loadData);
 </script>
 
 <div class="friendships-container">
   <h1>Friends</h1>
 
-  <form onsubmit={handleSendRequest} class="send-form">
-    <Input type="text" placeholder="Enter user ID to add" bind:value={newUserId2} required />
-    <Button type="submit" disabled={sending}>
-      {sending ? 'Sending...' : 'Send Request'}
-    </Button>
-  </form>
-  {#if sendError}
-    <p class="error">{sendError}</p>
-  {/if}
-
-  {#if error}
-    <p class="error">{error}</p>
-  {/if}
+  <Alert type="error" message={error} />
+  <Alert type="success" message={success} />
 
   {#if loading}
-    <p>Loading...</p>
-  {:else if friendships.length === 0}
-    <p>No friendships yet.</p>
+    <Loading />
   {:else}
-    <ul>
-      {#each friendships as f}
-        <li>
-          <div class="info">
-            <span class="user">User: {getOtherUserId(f)}</span>
-            <span class="status" class:pending={f.status === 'PENDING'} class:accepted={f.status === 'ACCEPTED'} class:blocked={f.status === 'BLOCKED'}>
-              {f.status}
-              {#if isIncoming(f)} (incoming){/if}
-            </span>
-          </div>
-          <div class="actions">
-            {#if isIncoming(f)}
-              <Button onclick={() => handleAccept(f.id)}>Accept</Button>
-            {/if}
-            {#if f.status !== 'BLOCKED'}
-              <Button onclick={() => handleBlock(f.id)}>Block</Button>
-            {/if}
-            <Button onclick={() => handleDelete(f.id)}>Remove</Button>
-          </div>
-        </li>
-      {/each}
-    </ul>
+    <h2>All Users</h2>
+    {#if users.length === 0}
+      <p class="empty">No other users found.</p>
+    {:else}
+      <ul>
+        {#each users as user}
+          {@const friendship = getFriendship(user.id)}
+          <li>
+            <Card>
+              <div class="user-row">
+                <div class="user-info">
+                  <span class="username">{user.username}</span>
+                  <span class="name">{user.name}</span>
+                </div>
+                <div class="actions">
+                  {#if !friendship}
+                    <Button
+                      onclick={() => handleSendRequest(user.id)}
+                      disabled={sending === user.id}
+                    >
+                      {sending === user.id ? 'Sending...' : 'Send Request'}
+                    </Button>
+                  {:else if friendship.status === 'PENDING' && isIncoming(friendship)}
+                    <Button onclick={() => handleAccept(friendship.id)}>Accept</Button>
+                    <span class="status-badge pending">Pending (incoming)</span>
+                  {:else if friendship.status === 'PENDING'}
+                    <span class="status-badge pending">Request Sent</span>
+                  {:else if friendship.status === 'ACCEPTED'}
+                    <span class="status-badge accepted">Friends</span>
+                    <Button onclick={() => { deleteTargetId = friendship.id; success = ''; }}>Remove</Button>
+                  {:else if friendship.status === 'BLOCKED'}
+                    <span class="status-badge blocked">Blocked</span>
+                  {/if}
+                  {#if friendship && friendship.status !== 'BLOCKED'}
+                    <Button onclick={() => handleBlock(friendship.id)}>Block</Button>
+                  {/if}
+                </div>
+              </div>
+            </Card>
+          </li>
+        {/each}
+      </ul>
+    {/if}
   {/if}
 </div>
 
+<Modal
+  open={deleteTargetId !== null}
+  title="Remove Friend"
+  onconfirm={handleDelete}
+  oncancel={() => (deleteTargetId = null)}
+>
+  <p>Are you sure you want to remove this friend?</p>
+</Modal>
+
 <style>
   .friendships-container {
-    max-width: 600px;
+    max-width: 640px;
     margin: 30px auto;
     padding: 0 20px;
     display: flex;
@@ -159,10 +190,10 @@
     gap: 16px;
   }
 
-  .send-form {
-    display: flex;
-    gap: 8px;
-    align-items: flex-end;
+  h2 {
+    margin: 0;
+    font-size: 1.05rem;
+    color: #374151;
   }
 
   ul {
@@ -170,37 +201,68 @@
     padding: 0;
     display: flex;
     flex-direction: column;
-    gap: 8px;
+    gap: 10px;
   }
 
-  li {
+  .user-row {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 10px;
-    border: 1px solid #ccc;
+    gap: 12px;
+    flex-wrap: wrap;
   }
 
-  .info {
+  .user-info {
     display: flex;
     flex-direction: column;
-    gap: 4px;
+    gap: 2px;
+  }
+
+  .username {
+    font-weight: 600;
+    color: #111827;
+  }
+
+  .name {
+    font-size: 0.85rem;
+    color: #6b7280;
   }
 
   .actions {
     display: flex;
+    align-items: center;
     gap: 6px;
+    flex-wrap: wrap;
   }
 
-  .status {
-    font-size: 0.8rem;
+  .status-badge {
+    font-size: 0.78rem;
+    padding: 2px 10px;
+    border-radius: 10px;
+    border: 1px solid currentColor;
   }
 
-  .status.pending { color: orange; }
-  .status.accepted { color: green; }
-  .status.blocked { color: red; }
-
-  .error {
-    color: red;
+  .status-badge.pending {
+    color: #d97706;
+    background: #fef3c7;
+    border-color: #fcd34d;
   }
-</style>
+
+  .status-badge.accepted {
+    color: #15803d;
+    background: #dcfce7;
+    border-color: #86efac;
+  }
+
+  .status-badge.blocked {
+    color: #b91c1c;
+    background: #fee2e2;
+    border-color: #fca5a5;
+  }
+
+  .empty {
+    color: #6b7280;
+    text-align: center;
+    padding: 20px 0;
+  }
+</style>

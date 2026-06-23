@@ -2,22 +2,25 @@ import repos from "../repositories/index.js";
 
 export const createConversation = async (req, res) => {
   try {
-    const { title, isGroup = false, chatType = "DIRECT" } = req.body;
+    const { title, isGroup = false, chatType = "DIRECT", userId2 } = req.body;
     const creatorId = req.user.id;
+
+    const participantsCreate = [
+      { user: { connect: { id: creatorId } }, participantRole: "ADMIN" },
+    ];
+    if (userId2 && userId2 !== creatorId) {
+      participantsCreate.push({
+        user: { connect: { id: userId2 } },
+        participantRole: "USER",
+      });
+    }
 
     const conversation = await repos.Conversation.create({
       title,
       isGroup,
       chatType,
       creator: { connect: { id: creatorId } },
-      participants: {
-        create: [
-          {
-            user: { connect: { id: creatorId } },
-            participantRole: "ADMIN",
-          },
-        ],
-      },
+      participants: { create: participantsCreate },
     });
 
     return res.status(201).json({ data: conversation });

@@ -1,17 +1,17 @@
 <script>
 // @ts-nocheck
-  import { currentUser } from '$lib/auth';
+  import { currentUser, logout } from '$lib/auth';
   import { goto } from '$app/navigation';
 
-  function logout() {
-    localStorage.removeItem('token');
-    currentUser.set(null);
+  function handleLogout() {
+    logout();
     goto('/login');
   }
 </script>
 
 <nav>
   <div class="nav-links">
+    <a href="/dashboard">Dashboard</a>
     <a href="/conversations">Conversations</a>
     <a href="/friendships">Friends</a>
     <a href="/usersettings">Settings</a>
@@ -19,7 +19,7 @@
   <div class="nav-user">
     {#if $currentUser}
       <span>Welcome, {$currentUser.username}</span>
-      <button onclick={logout}>Logout</button>
+      <button onclick={handleLogout}>Logout</button>
     {/if}
   </div>
 </nav>

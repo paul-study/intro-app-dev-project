@@ -13,12 +13,25 @@
 
   onMount(() => {
     const token = localStorage.getItem('token');
-    if (!token && !publicRoutes.includes($page.url.pathname)) {
-      goto('/login');
+    if (!token) {
+      if (!publicRoutes.includes($page.url.pathname)) {
+        goto('/login');
+      }
+      return;
     }
-    if (token) {
+    try {
       const payload = JSON.parse(atob(token.split('.')[1]));
+      if (payload.exp && payload.exp * 1000 < Date.now()) {
+        localStorage.removeItem('token');
+        currentUser.set(null);
+        goto('/login');
+        return;
+      }
       currentUser.set(payload);
+    } catch {
+      localStorage.removeItem('token');
+      currentUser.set(null);
+      goto('/login');
     }
   });
 </script>

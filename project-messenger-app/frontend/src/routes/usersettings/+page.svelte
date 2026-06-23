@@ -1,10 +1,11 @@
-<script>
+﻿<script>
   // @ts-nocheck
   import { onMount } from 'svelte';
   import { apiCall } from '$lib/api';
-  import { currentUser } from '$lib/auth';
   import Button from '$lib/components/Button.svelte';
   import Input from '$lib/components/Input.svelte';
+  import Alert from '$lib/components/Alert.svelte';
+  import Loading from '$lib/components/Loading.svelte';
 
   let settings = $state(null);
   let settingsId = $state('');
@@ -33,13 +34,12 @@
     error = '';
     try {
       const token = localStorage.getItem('token');
-      const data = await apiCall('/api/usersettings/me', {
-      headers: { Authorization: `Bearer ${token}` }
+      const data = await apiCall('/api/user-settings/me', {
+        headers: { Authorization: `Bearer ${token}` }
       });
       settings = data.data;
       applySettings(data.data);
     } catch (err) {
-      // 404 means no settings created yet — that's fine
       if (!err.message.includes('404') && !err.message.includes('Not found')) {
         error = err.message;
       }
@@ -58,14 +58,14 @@
 
     try {
       if (settings) {
-        const data = await apiCall(`/api/usersettings/${settingsId}`, {
+        const data = await apiCall(`/api/user-settings/${settingsId}`, {
           method: 'PUT',
           headers: { Authorization: `Bearer ${token}` },
           body: JSON.stringify(body)
         });
         applySettings(data.data);
       } else {
-        const data = await apiCall('/api/usersettings', {
+        const data = await apiCall('/api/user-settings', {
           method: 'POST',
           headers: { Authorization: `Bearer ${token}` },
           body: JSON.stringify(body)
@@ -73,7 +73,7 @@
         settings = data.data;
         applySettings(data.data);
       }
-      success = 'Settings saved';
+      success = 'Settings saved successfully.';
     } catch (err) {
       error = err.message;
     } finally {
@@ -87,16 +87,11 @@
 <div class="settings-container">
   <h1>User Settings</h1>
 
-  {#if error}
-    <p class="error">{error}</p>
-  {/if}
-
-  {#if success}
-    <p class="success">{success}</p>
-  {/if}
+  <Alert type="error" message={error} />
+  <Alert type="success" message={success} />
 
   {#if loading}
-    <p>Loading...</p>
+    <Loading />
   {:else}
     <form onsubmit={handleSave}>
       <label>
@@ -106,17 +101,56 @@
 
       <label>
         Theme Color
-        <Input type="text" placeholder="e.g. dark, light" bind:value={themeColor} />
+        <Input
+          type="select"
+          placeholder="Select theme color"
+          bind:value={themeColor}
+          options={[
+            { value: '#0f62fe', label: 'Blue' },
+            { value: '#198038', label: 'Green' },
+            { value: '#a56eff', label: 'Purple' },
+            { value: '#ff832b', label: 'Orange' },
+            { value: '#da1e28', label: 'Red' },
+          ]}
+        />
       </label>
 
       <label>
         Language
-        <Input type="text" placeholder="e.g. en, fr" bind:value={language} />
+        <Input
+          type="select"
+          placeholder="Select language"
+          bind:value={language}
+          options={[
+            { value: 'en', label: 'English' },
+            { value: 'fr', label: 'French' },
+            { value: 'es', label: 'Spanish' },
+            { value: 'de', label: 'German' },
+            { value: 'ja', label: 'Japanese' },
+            { value: 'zh', label: 'Chinese' },
+          ]}
+        />
       </label>
 
       <label>
         Time Zone
-        <Input type="text" placeholder="e.g. Pacific/Auckland" bind:value={timeZone} />
+        <Input
+          type="select"
+          placeholder="Select time zone"
+          bind:value={timeZone}
+          options={[
+            { value: 'UTC', label: 'UTC' },
+            { value: 'Pacific/Auckland', label: 'Pacific/Auckland (NZST)' },
+            { value: 'Pacific/Chatham', label: 'Pacific/Chatham (CHAST)' },
+            { value: 'Australia/Sydney', label: 'Australia/Sydney (AEST)' },
+            { value: 'Asia/Tokyo', label: 'Asia/Tokyo (JST)' },
+            { value: 'Asia/Shanghai', label: 'Asia/Shanghai (CST)' },
+            { value: 'Europe/London', label: 'Europe/London (GMT)' },
+            { value: 'Europe/Paris', label: 'Europe/Paris (CET)' },
+            { value: 'America/New_York', label: 'America/New_York (EST)' },
+            { value: 'America/Los_Angeles', label: 'America/Los_Angeles (PST)' },
+          ]}
+        />
       </label>
 
       <label class="checkbox-label">
@@ -133,9 +167,12 @@
 
 <style>
   .settings-container {
-    max-width: 500px;
+    max-width: 520px;
     margin: 30px auto;
     padding: 0 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
   }
 
   form {
@@ -149,19 +186,12 @@
     flex-direction: column;
     gap: 4px;
     font-size: 0.9rem;
+    color: #374151;
   }
 
   .checkbox-label {
     flex-direction: row;
     align-items: center;
     gap: 8px;
-  }
-
-  .error {
-    color: red;
-  }
-
-  .success {
-    color: green;
   }
 </style>

@@ -6,28 +6,42 @@
   import { currentUser } from '$lib/auth';
   import Button from '$lib/components/Button.svelte';
   import Input from '$lib/components/Input.svelte';
+  import Alert from '$lib/components/Alert.svelte';
+  import Loading from '$lib/components/Loading.svelte';
+  import Card from '$lib/components/Card.svelte';
+  import Modal from '$lib/components/Modal.svelte';
 
-  let conversations = [];
-  let loading = true;
-  let error = '';
+  let conversations = $state([]);
+  let users = $state([]);
+  let loading = $state(true);
+  let error = $state('');
+  let success = $state('');
 
-  let showForm = false;
-  let newTitle = '';
-  let newChatType = 'DIRECT';
-  let creating = false;
-  let createError = '';
+  let showForm = $state(false);
+  let newTitle = $state('');
+  let newChatType = $state('DIRECT');
+  let newUserId2 = $state('');
+  let creating = $state(false);
+  let createError = $state('');
+  let titleError = $state('');
+  let userError = $state('');
+
+  let deleteTargetId = $state(null);
+  let deleting = $state(false);
 
   async function loadConversations() {
     loading = true;
     error = '';
     try {
       const token = localStorage.getItem('token');
-      const data = await apiCall('/api/conversations', {
-        headers: { Authorization: `Bearer ${token}` }
-      });
-      conversations = data.data;
+      const [convoRes, userRes] = await Promise.all([
+        apiCall('/api/conversations', { headers: { Authorization: `Bearer ${token}` } }),
+        apiCall('/api/users?limit=100', { headers: { Authorization: `Bearer ${token}` } })
+      ]);
+      conversations = convoRes.data;
+      users = userRes.data.filter((u) => u.id !== $currentUser?.id);
     } catch (err) {
-      error = 'Failed to load conversations';
+      error = 'Failed to load conversations.';
     } finally {
       loading = false;
     }
@@ -35,37 +49,52 @@
 
   async function handleCreate(e) {
     e.preventDefault();
+    titleError = '';
+    userError = '';
+    if (!newTitle.trim()) { titleError = 'Title is required.'; return; }
+    if (newChatType === 'DIRECT' && !newUserId2) { userError = 'Select a user to message.'; return; }
     creating = true;
     createError = '';
     try {
       const token = localStorage.getItem('token');
       const isGroup = newChatType === 'GROUP';
+      const body = { title: newTitle.trim(), chatType: newChatType, isGroup };
+      if (newChatType === 'DIRECT') body.userId2 = newUserId2;
       await apiCall('/api/conversations', {
         method: 'POST',
         headers: { Authorization: `Bearer ${token}` },
-        body: JSON.stringify({ title: newTitle, chatType: newChatType, isGroup })
+        body: JSON.stringify(body)
       });
       newTitle = '';
       newChatType = 'DIRECT';
+      newUserId2 = '';
       showForm = false;
+      success = 'Conversation created.';
       await loadConversations();
     } catch (err) {
-      createError = 'Failed to create conversation';
+      createError = err.message;
     } finally {
       creating = false;
     }
   }
 
-  async function handleDelete(id) {
+  async function handleDelete() {
+    if (!deleteTargetId) return;
+    deleting = true;
     try {
       const token = localStorage.getItem('token');
-      await apiCall(`/api/conversations/${id}`, {
+      await apiCall(`/api/conversations/${deleteTargetId}`, {
         method: 'DELETE',
         headers: { Authorization: `Bearer ${token}` }
       });
+      deleteTargetId = null;
+      success = 'Conversation deleted.';
       await loadConversations();
     } catch (err) {
-      error = 'Failed to delete conversation';
+      error = 'Failed to delete conversation.';
+      deleteTargetId = null;
+    } finally {
+      deleting = false;
     }
   }
 
@@ -73,19 +102,24 @@
 </script>
 
 <div class="conversations-container">
-  <div class="header">
+  <div class="page-header">
     <h1>Conversations</h1>
-    <Button onclick={() => (showForm = !showForm)}>
+    <Button onclick={() => { showForm = !showForm; createError = ''; titleError = ''; success = ''; }}>
       {showForm ? 'Cancel' : 'New Conversation'}
     </Button>
   </div>
 
+  <Alert type="error" message={error} />
+  <Alert type="success" message={success} />
+
   {#if showForm}
-    <form onsubmit={handleCreate} class="create-form">
-      {#if createError}
-        <p class="error">{createError}</p>
-      {/if}
-      <Input type="text" placeholder="Conversation title" bind:value={newTitle} required />
+    <form onsubmit={handleCreate} class="create-form" novalidate>
+      <h2>New Conversation</h2>
+      <Alert type="error" message={createError} />
+      <div class="field">
+        <Input type="text" placeholder="Conversation title" bind:value={newTitle} />
+        {#if titleError}<span class="field-error">{titleError}</span>{/if}
+      </div>
       <Input
         type="select"
         placeholder="Chat type"
@@ -95,58 +129,112 @@
           { value: 'GROUP', label: 'Group' }
         ]}
       />
+      {#if newChatType === 'DIRECT'}
+        <div class="field">
+          <Input
+            type="select"
+            placeholder="Select user to message"
+            bind:value={newUserId2}
+            options={users.map((u) => ({ value: u.id, label: u.username }))}
+          />
+          {#if userError}<span class="field-error">{userError}</span>{/if}
+        </div>
+      {/if}
       <Button type="submit" disabled={creating}>
         {creating ? 'Creating...' : 'Create'}
       </Button>
     </form>
   {/if}
 
-  {#if error}
-    <p class="error">{error}</p>
-  {/if}
-
   {#if loading}
-    <p>Loading...</p>
+    <Loading />
   {:else if conversations.length === 0}
-    <p>No conversations yet.</p>
+    <p class="empty">No conversations yet. Start one above!</p>
   {:else}
     <ul>
       {#each conversations as convo}
+        {@const otherParticipant = convo.chatType === 'DIRECT'
+          ? (convo.participants || []).find((p) => p.user?.id !== $currentUser?.id)
+          : null}
         <li>
-          <button class="convo-item" onclick={() => goto(`/messages?conversationId=${convo.id}`)}>
-            <span class="title">{convo.title || 'Untitled'}</span>
-            <span class="type">{convo.chatType}</span>
-          </button>
-          {#if $currentUser?.id === convo.creatorId || $currentUser?.role === 'ADMIN'}
-            <Button onclick={() => handleDelete(convo.id)}>Delete</Button>
-          {/if}
+          <Card>
+            <div class="convo-row">
+              <button
+                class="convo-info"
+                onclick={() => goto(`/messages?conversationId=${convo.id}`)}
+              >
+                <span class="title">
+                  {otherParticipant ? otherParticipant.user.username : (convo.title || 'Untitled')}
+                </span>
+                <span class="type-badge">{convo.chatType}</span>
+              </button>
+              <div class="convo-actions">
+                <Button onclick={() => goto(`/conversations/${convo.id}`)}>Detail</Button>
+                {#if $currentUser?.id === convo.creatorId || $currentUser?.role === 'ADMIN'}
+                  <Button onclick={() => { deleteTargetId = convo.id; success = ''; }}>Delete</Button>
+                {/if}
+              </div>
+            </div>
+          </Card>
         </li>
       {/each}
     </ul>
   {/if}
 </div>
 
+<Modal
+  open={deleteTargetId !== null}
+  title="Delete Conversation"
+  onconfirm={handleDelete}
+  oncancel={() => (deleteTargetId = null)}
+>
+  <p>Are you sure you want to delete this conversation? This cannot be undone.</p>
+</Modal>
+
 <style>
   .conversations-container {
-    max-width: 600px;
+    max-width: 640px;
     margin: 30px auto;
     padding: 0 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
   }
 
-  .header {
+  .page-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 20px;
+  }
+
+  .page-header h1 {
+    margin: 0;
   }
 
   .create-form {
     display: flex;
     flex-direction: column;
     gap: 10px;
-    margin-bottom: 20px;
-    padding: 16px;
-    border: 1px solid #ccc;
+    padding: 20px;
+    border: 1px solid #e5e7eb;
+    border-radius: 8px;
+    background: #f9fafb;
+  }
+
+  .create-form h2 {
+    margin: 0;
+    font-size: 1.05rem;
+  }
+
+  .field {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  .field-error {
+    color: #b91c1c;
+    font-size: 0.8rem;
   }
 
   ul {
@@ -154,18 +242,17 @@
     padding: 0;
     display: flex;
     flex-direction: column;
-    gap: 8px;
+    gap: 10px;
   }
 
-  li {
+  .convo-row {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    border: 1px solid #ccc;
-    padding: 10px;
+    gap: 12px;
   }
 
-  .convo-item {
+  .convo-info {
     background: none;
     border: none;
     cursor: pointer;
@@ -175,14 +262,44 @@
     gap: 4px;
     flex: 1;
     padding: 0;
+    text-align: left;
   }
 
-  .type {
-    font-size: 0.8rem;
-    color: #666;
+  .convo-info:hover .title {
+    color: #2563eb;
+    text-decoration: underline;
   }
 
-  .error {
-    color: red;
+  .title {
+    font-weight: 600;
+    color: #111827;
+  }
+
+  .type-badge {
+    font-size: 0.78rem;
+    color: #6b7280;
+    background: #f3f4f6;
+    padding: 1px 8px;
+    border-radius: 10px;
+    border: 1px solid #e5e7eb;
+  }
+
+  .convo-actions {
+    display: flex;
+    gap: 6px;
+    flex-shrink: 0;
+  }
+
+  .empty {
+    color: #6b7280;
+    text-align: center;
+    padding: 20px 0;
+  }
+
+  @media (max-width: 480px) {
+    .convo-row {
+      flex-direction: column;
+      align-items: flex-start;
+    }
   }
 </style>
