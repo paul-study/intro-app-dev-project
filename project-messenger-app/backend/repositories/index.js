@@ -38,8 +38,8 @@ const Conversation = {
 
 const Message = {
   create: (data) => prisma.message.create({ data }),
-  findAll: (filter = {}) => prisma.message.findMany({ where: filter, orderBy: { timestamp: "asc" } }),
-  findById: (id) => prisma.message.findUnique({ where: { id } }),
+  findAll: (filter = {}) => prisma.message.findMany({ where: filter, orderBy: { timestamp: "asc" }, include: { sender: { select: { id: true, username: true } } } }),
+  findById: (id) => prisma.message.findUnique({ where: { id }, include: { sender: { select: { id: true, username: true } } } }),
   update: (id, data) => prisma.message.update({ where: { id }, data }),
   delete: (id) => prisma.message.delete({ where: { id } }),
   findByConversationId: (conversationId, opts = {}) =>

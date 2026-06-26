@@ -29,7 +29,7 @@ export const getUsers = async (req, res) => {
     const {
       page = 1,
       limit = 10,
-      sort = "createdAt",
+      sort = "id",
       order = "asc",
       role,
       gender,

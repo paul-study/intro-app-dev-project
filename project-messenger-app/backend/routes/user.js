@@ -24,7 +24,7 @@ const router = express.Router();
 router.post("/", validatePostUser, jwtAuth, rateLimitByRole, createUser);
 // router.get("/", getUsers);
 // router.get("/:id", getUser);
-router.get("/", jwtAuth, authorize(["ADMIN"]), rateLimitByRole, cacheGet, getUsers);
+router.get("/", jwtAuth, authorize(["ADMIN", "USER"]), rateLimitByRole, cacheGet, getUsers);
 router.get("/:id", jwtAuth, ownerOrAdmin("id"), rateLimitByRole, cacheGet, getUser);
 // router.put("/:id", updateUser);
 // router.put("/:id", validatePutUser, updateUser);

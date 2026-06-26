@@ -22,20 +22,9 @@ export const createMessage = async (req, res) => {
 
 export const getMessages = async (req, res) => {
   try {
-    const userId = req.user.id;
-    const isAdmin = req.user.role === "ADMIN";
     const { conversationId } = req.query;
-
     const where = conversationId ? { conversationId } : {};
     const messages = await repos.Message.findAll(where);
-    
-    if (!isAdmin && conversationId) {
-      const conv = await repos.Conversation.findById(conversationId);
-      const isParticipant = (conv.participants || []).some(p => p.userId === userId);
-      if (!isParticipant) return res.status(403).json({ message: "Forbidden" });
-      return res.status(200).json({ data: messages });
-    }
-
     return res.status(200).json({ data: messages });
   } catch (err) {
     return res.status(500).json({ message: err.message });

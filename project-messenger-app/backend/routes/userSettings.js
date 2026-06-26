@@ -5,13 +5,15 @@ import {
   getUserSettingsList,
   getUserSettingsById,
   updateUserSettings,
-  deleteUserSettings
+  deleteUserSettings,
+  getMyUserSettings
 } from "../controllers/userSettings.js";
 
 const router = express.Router();
 
 router.post("/", jwtAuth, createUserSettings);
 router.get("/", jwtAuth, getUserSettingsList);
+router.get("/me", jwtAuth, getMyUserSettings);
 router.get("/:id", jwtAuth, getUserSettingsById);
 router.put("/:id", jwtAuth, updateUserSettings);
 router.delete("/:id", jwtAuth, deleteUserSettings);
