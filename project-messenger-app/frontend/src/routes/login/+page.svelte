@@ -1,13 +1,39 @@
 <script>
+	// @ts-nocheck
 	import { goto } from '$app/navigation';
 	import { apiCall } from '$lib/api';
+	import { currentUser } from '$lib/auth';
+	import Input from '$lib/components/Input.svelte';
+	import Button from '$lib/components/Button.svelte';
+	import Alert from '$lib/components/Alert.svelte';
 
-	let identifier = '';
-	let password = '';
-	let error = '';
-	let loading = false;
+	let identifier = $state('');
+	let password = $state('');
+	let error = $state('');
+	let loading = $state(false);
 
-	async function handleLogin() {
+	let identifierError = $state('');
+	let passwordError = $state('');
+
+	function validate() {
+		identifierError = '';
+		passwordError = '';
+		let valid = true;
+		if (!identifier.trim()) {
+			identifierError = 'Email or username is required.';
+			valid = false;
+		}
+		if (!password) {
+			passwordError = 'Password is required.';
+			valid = false;
+		}
+		return valid;
+	}
+
+	async function handleLogin(e) {
+		e.preventDefault();
+		if (!validate()) return;
+
 		loading = true;
 		error = '';
 
@@ -18,13 +44,11 @@
 			});
 
 			localStorage.setItem('token', data.token);
-			await goto('/conversations');
+			const payload = JSON.parse(atob(data.token.split('.')[1]));
+			currentUser.set(payload);
+			await goto('/dashboard');
 		} catch (err) {
-			if (err instanceof Error) {
-				error = err.message;
-			} else {
-				error = 'Login failed';
-			}
+			error = err instanceof Error ? err.message : 'Login failed.';
 		} finally {
 			loading = false;
 		}
@@ -34,23 +58,33 @@
 <div class="login-container">
 	<h1>Login</h1>
 
-	{#if error}
-		<p class="error">{error}</p>
-	{/if}
+	<Alert type="error" message={error} />
 
-	<form on:submit|preventDefault={handleLogin}>
-		<input type="text" placeholder="Enter Email or Username" bind:value={identifier} required />
-		<input type="password" placeholder="Password" bind:value={password} required />
-		<button type="submit" disabled={loading}>
+	<form onsubmit={handleLogin} novalidate>
+		<div class="field">
+			<Input type="text" placeholder="Email or Username" bind:value={identifier} />
+			{#if identifierError}<span class="field-error">{identifierError}</span>{/if}
+		</div>
+		<div class="field">
+			<Input type="password" placeholder="Password" bind:value={password} />
+			{#if passwordError}<span class="field-error">{passwordError}</span>{/if}
+		</div>
+		<Button type="submit" disabled={loading}>
 			{loading ? 'Logging in...' : 'Login'}
-		</button>
+		</Button>
 	</form>
+
+	<p class="switch">Don't have an account? <a href="/register">Register</a></p>
 </div>
 
 <style>
 	.login-container {
-		max-width: 400px;
-		margin: 50px auto;
+		max-width: 420px;
+		margin: 60px auto;
+		padding: 0 20px;
+		display: flex;
+		flex-direction: column;
+		gap: 16px;
 	}
 
 	form {
@@ -59,12 +93,30 @@
 		gap: 10px;
 	}
 
-	input,
-	button {
-		padding: 10px;
+	.field {
+		display: flex;
+		flex-direction: column;
+		gap: 4px;
 	}
 
-	.error {
-		color: red;
+	.field-error {
+		color: #b91c1c;
+		font-size: 0.8rem;
+	}
+
+	.switch {
+		text-align: center;
+		font-size: 0.9rem;
+		color: #4b5563;
+	}
+
+	.switch a {
+		color: #2563eb;
+		text-decoration: none;
+	}
+
+	.switch a:hover {
+		text-decoration: underline;
 	}
 </style>
+
