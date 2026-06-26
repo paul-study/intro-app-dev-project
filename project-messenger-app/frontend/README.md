@@ -96,3 +96,11 @@ You can preview the production build with `npm run preview`.
 
 ### Health
 - `GET /health` - Health check endpoint
+
+
+### Deployed on netlify frontend
+- https://intro-app-dev-project.netlify.app/
+
+### Deployed on render backend
+- https://id607001-s1-26-paul-study-messenger-db.onrender.com
+
